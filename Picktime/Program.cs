@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-NBIV360;Initial Catalog=PickTime;Integrated Security=True;TrustServerCertificate=True"));
+builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-V1IJ63L\\SQLEXPRESS;Initial Catalog=PickTimeDB;Integrated Security=True;TrustServerCertificate=True"));
 builder.Services.AddScoped<IAuth, AuthService>(); //configure for my service 
 var app = builder.Build();
 

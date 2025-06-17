@@ -17,8 +17,62 @@ namespace Picktime.Controllers
         {
             _IAuth = IUserAuth;
         }
+
+
+
+
+
         [HttpPost("[action]")]
-        public async Task<IActionResult> SendOTP([FromBody] string email)
+        public async Task<IActionResult> SignUp(SignUpInputDTO input)
+        {
+            try
+            {
+                var result = await _IAuth.SignUp(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SignIn(SignInInputDTO input)
+        {
+            try
+            {
+                var result = await _IAuth.SignIn(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordInputDTO input)
+        {
+            try
+            {
+                var result = await _IAuth.ResetPassword(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
+
+
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SendOTP(string email)
         {
             try
             {
@@ -34,7 +88,7 @@ namespace Picktime.Controllers
             }
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult>  SignOut([FromBody]  int userId)
+        public async Task<IActionResult>  SignOut(int userId)
         {
             try
             {

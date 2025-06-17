@@ -3,11 +3,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Picktime.Heplers
+namespace Picktime.Heplers.Token
 {
     public class TokenHelper
     {
-        public static string GenerateJWTToken(string userId, bool isAdmin)
+        public static string GenerateJWTToken(string userId, string role)
         {
           
             var jwtToken = new JwtSecurityTokenHandler();
@@ -22,7 +22,7 @@ namespace Picktime.Heplers
                 Subject = new ClaimsIdentity(new Claim[]
                 {
                 new Claim("UserId", userId),
-                new Claim("IsAdmin", isAdmin.ToString())
+                new Claim("Role", role.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenByteKey), SecurityAlgorithms.HmacSha256Signature)
