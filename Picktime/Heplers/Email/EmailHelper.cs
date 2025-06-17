@@ -5,7 +5,7 @@ using System.Net.Mail;
 namespace Picktime.Heplers.Email
 {
     public static class EmailHelper
-    {
+    { 
         public static async Task SendEmail(string email, string code, string title, string message)
         {
             var apiKey = "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";
