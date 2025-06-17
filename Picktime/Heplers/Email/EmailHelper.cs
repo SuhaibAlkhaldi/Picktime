@@ -13,7 +13,7 @@ namespace Picktime.Heplers.Email
             var from = new EmailAddress("suhaibamjad73@gmail.com", "PickTime Admin");
             var subject = title;
             var to = new EmailAddress(email, "PickTime User");
-            var plainTextContent = $"Dear User {message}  Please Use The Following OTP Code {code} It Will be Expired With in 10 minutes";
+            var plainTextContent = "";
             //var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
             var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, "");
             var response = await client.SendEmailAsync(msg);
