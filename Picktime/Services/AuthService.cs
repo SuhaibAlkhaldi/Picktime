@@ -80,7 +80,7 @@ namespace Picktime.Services
                 }
                 //var role = user.IsAdmin ? "Admin" : "User";
                 //var token = TokenHelper.GenerateJWTToken(user.Id.ToString(), role);
-                //return token;
+                //return token; 
                 return "Check Your Email";
                 
 
