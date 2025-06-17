@@ -101,7 +101,7 @@ namespace Picktime.Services
             {
                 //SendOTP
                 if (string.IsNullOrEmpty(input.PhoneNumber) && string.IsNullOrEmpty(input.Email))
-                    throw new Exception("Email or Phone Number must be provided.");
+                    throw new Exception("Email or Phone Number must be provided."); 
 
                 string originalUserName = input.PhoneNumber ?? input.Email;
 
