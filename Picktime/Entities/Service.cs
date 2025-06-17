@@ -1,6 +1,6 @@
 ﻿namespace Picktime.Entities
 {
-    public class Services : SharedClass
+    public class Service : SharedClass
     {
         public string Name { get; set; }
         public int UserCount {  get; set; }

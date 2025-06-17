@@ -11,6 +11,10 @@
         public int Points { get; set; }
         public string Gender { get; set; }
         public bool IsAdmin { get; set; } = false;
+        public string? OTPCode { get; set; }
+        public DateTime? OTPExpiry { get; set; }
+        public bool? IsLoggedIn { get; set; }
+        
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<Reviews> Reviews { get; set; }
 
