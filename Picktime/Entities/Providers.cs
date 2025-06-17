@@ -9,7 +9,7 @@
         public int CategoryId { get; set; }
         public Category Categories { get; set; }
         public ICollection<Reviews> Reviews { get; set; }
-        public ICollection<Services> Services { get; set; }
+        public ICollection<ServicesEntity> Services { get; set; }
        
     }
 }

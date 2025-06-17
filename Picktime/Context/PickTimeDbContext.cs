@@ -9,7 +9,7 @@ namespace Picktime.Context
         public DbSet<LockUpType> LockUpType { get; set; }
         public DbSet<LockUpItems> LockUpItems { get; set; }
         public DbSet<Users> Users { get; set; }
-        public DbSet<Services> Services { get; set; }
+        public DbSet<ServicesEntity> Services { get; set; }
         public DbSet<Providers> ServiceProviders { get; set; }
         public DbSet<Reviews> Reviews { get; set; }
         public DbSet<Booking> Bookings { get; set; }
