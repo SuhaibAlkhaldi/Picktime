@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
+using Picktime.Interfaces;
+using Picktime.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<PickTimeDbContext>(opt => opt.UseSqlServer("Data Source=DESKTOP-V1IJ63L\\SQLEXPRESS;Initial Catalog=PickTimeDB;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"));
-
+builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-NBIV360;Initial Catalog=PickTime;Integrated Security=True;TrustServerCertificate=True"));
+builder.Services.AddScoped<IAuth, AuthService>(); //configure for my service 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

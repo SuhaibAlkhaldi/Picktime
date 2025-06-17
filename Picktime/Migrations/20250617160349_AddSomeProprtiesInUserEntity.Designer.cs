@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Picktime.Context;
 
@@ -11,9 +12,11 @@ using Picktime.Context;
 namespace Picktime.Migrations
 {
     [DbContext(typeof(PickTimeDbContext))]
-    partial class PickTimeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250617160349_AddSomeProprtiesInUserEntity")]
+    partial class AddSomeProprtiesInUserEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,7 +165,7 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 19, 8, 22, 529, DateTimeKind.Local).AddTicks(5188),
+                            CreationDate = new DateTime(2025, 6, 17, 19, 3, 49, 134, DateTimeKind.Local).AddTicks(5809),
                             Discount = 0.1f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -173,7 +176,7 @@ namespace Picktime.Migrations
                         {
                             Id = 2,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 19, 8, 22, 529, DateTimeKind.Local).AddTicks(5192),
+                            CreationDate = new DateTime(2025, 6, 17, 19, 3, 49, 134, DateTimeKind.Local).AddTicks(5816),
                             Discount = 0.2f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -184,7 +187,7 @@ namespace Picktime.Migrations
                         {
                             Id = 3,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 19, 8, 22, 529, DateTimeKind.Local).AddTicks(5194),
+                            CreationDate = new DateTime(2025, 6, 17, 19, 3, 49, 134, DateTimeKind.Local).AddTicks(5818),
                             Discount = 0.3f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -230,7 +233,7 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 19, 8, 22, 529, DateTimeKind.Local).AddTicks(4988),
+                            CreationDate = new DateTime(2025, 6, 17, 19, 3, 49, 134, DateTimeKind.Local).AddTicks(5505),
                             IsActive = true,
                             Name = "Coupon",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)

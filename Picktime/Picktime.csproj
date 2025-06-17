@@ -20,12 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Heplers\" />
-    <Folder Include="DTOs\" />
-    <Folder Include="Interfaces\" />
     <Folder Include="Uploads\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

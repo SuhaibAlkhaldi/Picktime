@@ -10,7 +10,14 @@
         public float Age {  get; set; }
         public int Points { get; set; }
         public string Gender { get; set; }
+
+        public DateTime LastLoginTime { get; set; }
+        public string? OTPCode { get; set; }
+        public DateTime? OTPExipry { get; set; }
         public bool IsAdmin { get; set; } = false;
+
+        public bool? IsLogedIn { get; set; }
+        public bool IsVerfied { get; set; } = false;
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<Reviews> Reviews { get; set; }
 
