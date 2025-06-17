@@ -9,7 +9,8 @@
         public int UserId { get; set; }
         public Users Users { get; set; }
         public int ServiceId { get; set; }
-        public Service Services { get; set; }
+        public ServicesEntity ServicesEntity { get; set; }
+
 
     }
 }
