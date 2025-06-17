@@ -12,7 +12,7 @@ namespace Picktime.Heplers.Email
             var apiKey = "";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("suhaibamjad73@gmail.com", "PickTime Admin");
-            var subject = title;
+            var subject = title; 
             var to = new EmailAddress(email, "PickTime User");
             var plainTextContent = "";
             //var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
