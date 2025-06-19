@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using Picktime.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,7 +8,7 @@ namespace Picktime.Heplers.Token
 {
     public class TokenHelper
     {
-        public static string GenerateJWTToken(string userId, string role)
+        public static string GenerateJWTToken(User users,string role)
         {
           
             var jwtToken = new JwtSecurityTokenHandler();
@@ -21,8 +22,9 @@ namespace Picktime.Heplers.Token
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                new Claim("UserId", userId),
-                new Claim("Role", role.ToString())
+                new Claim("UserId", users.Id.ToString()),
+                new Claim("Role", role.ToString()),
+                new Claim("SelectedLanguage",users.SelectedLanguage.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenByteKey), SecurityAlgorithms.HmacSha256Signature)

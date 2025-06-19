@@ -6,45 +6,49 @@ using Picktime.Entities;
 using Picktime.Heplers.Email;
 using Picktime.Heplers.Hashing;
 using Picktime.Heplers.Token;
+using Picktime.Heplers.Validation;
 using Picktime.Interfaces;
 using System;
-
-﻿using Picktime.Context;
-using Picktime.DTOs;
-using Picktime.Heplers;
-using Picktime.Interfaces;
-
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 
 namespace Picktime.Services
 {
     public class AuthService : IAuth
     {
         private readonly PickTimeDbContext _context;
+        private readonly BaseDTO _baseDTO;
 
-        public AuthService(PickTimeDbContext context)
+        public AuthService(PickTimeDbContext context , BaseDTO baseDTO)
         {
             _context = context;
+            _baseDTO = baseDTO; 
         }
 
         public async Task<string> SignUp(SignUpInputDTO input)
         {
             try
             {
-                Users user = new Users();
+                if (ValidationUserHelper.IsFirstNameValid(input.FirstName) && ValidationUserHelper.IsLastNameValid(input.LastName) && ValidationUserHelper.IsPhoneNumberValid(input.PhoneNumber)
+                    && ValidationUserHelper.IsPasswordValid(input.Password) &&ValidationUserHelper.IsEmailValid(input.Email))
+                {
+                    User user = new User();
 
-                user.FirstName = input.FirstName;
-                user.LastName = input.LastName;
-                user.Email = HashingHelper.HashValueWith384(input.Email);
-                user.Password = HashingHelper.HashValueWith384(input.Password);
-                user.PhoneNumber = HashingHelper.HashValueWith384(input.PhoneNumber);
-                user.Age = input.Age;
-                user.Gender = input.Gender;
-                user.CreationDate = DateTime.Now;
-                user.IsLoggedIn = false;
-                var otp = SendOTP(user.Email);
-                await EmailHelper.SendEmail(input.Email, otp.ToString(), "Sign Up  OTP", "Complete Sign Up Operation");
-                await _context.Users.AddAsync(user);
-                await _context.SaveChangesAsync();
+                    user.FirstName = input.FirstName;
+                    user.LastName = input.LastName;
+                    user.Email = HashingHelper.HashValueWith384(input.Email);
+                    user.Password = HashingHelper.HashValueWith384(input.Password);
+                    user.PhoneNumber = HashingHelper.HashValueWith384(input.PhoneNumber);
+                    user.Birthdate = input.Birthdate;
+                    user.Gender = input.Gender;
+                    user.CreationDate = DateTime.Now;
+                    user.IsLoggedIn = false;
+                    user.SelectedLanguage = input.Language;
+                    var otp = SendOTP(user.Email);
+                    await _context.Users.AddAsync(user);
+                    await _context.SaveChangesAsync();
+                    await EmailHelper.SendEmail(input.Email, otp.ToString(), "Sign Up  OTP", "Complete Sign Up Operation");
+                    
+                }
                 return "Account Created Successfully";
             }
             catch (Exception ex)
@@ -56,7 +60,7 @@ namespace Picktime.Services
 
 
 
-        public async Task<string> SignIn(SignInInputDTO input)
+        public async Task<LoginResponseDTO> SignIn(SignInInputDTO input)
         {
             try
             {
@@ -64,14 +68,8 @@ namespace Picktime.Services
                     throw new Exception("Email or Phone Number must be provided.");
                 string originalUserName = input.PhoneNumber ?? input.Email;
 
-                Users user = new Users();   
 
-
-                if (user.IsLoggedIn == true)
-                {
-                    throw new Exception("You Are Already LoggedIn");
-                }
-
+                var user = new User();
 
                 if (!string.IsNullOrEmpty(input.PhoneNumber))
                 {
@@ -86,21 +84,36 @@ namespace Picktime.Services
                         x.Email == hashedEmail &&
                         x.IsLoggedIn == false).SingleOrDefaultAsync();
                 }
-
+                
+                if (user?.IsLoggedIn == true || user?.LastLoggedInDeviceAddress == _baseDTO.MacAddress)
+                {
+                    await SendOTP(input.Email);
+                    return new LoginResponseDTO
+                    {
+                        NeedOTP = true,
+                        Token = null
+                    };
+                }
                 if (user == null)
                 {
                     throw new Exception("User Not Found");
                 }
                 else
                 {
-                    SendOTP(input.Email);
+                    await SendOTP(input.Email);
                     user.IsLoggedIn = true;
                     await _context.SaveChangesAsync();
                     await EmailHelper.SendEmail(user.Email ?? originalUserName, user.OTPCode, "Sign In OTP", "Complete Sign In Operation");
                 }
-                var role = user.IsAdmin ? "Admin" : "User";
-                var token = TokenHelper.GenerateJWTToken(user.Id.ToString(),role); 
-                return token;
+                var role = user.IsAdmin ? "Admin" : "Client";
+                var token = TokenHelper.GenerateJWTToken(user,role); 
+
+
+                return new LoginResponseDTO
+                {
+                    Token = token,  
+                    NeedOTP = false 
+                };
                 
 
 
@@ -126,12 +139,11 @@ namespace Picktime.Services
                 string originalUserName = input.PhoneNumber ?? input.Email;
 
                 var hashedEmail = HashingHelper.HashValueWith384(input.Email);
-                var hashedPhone = HashingHelper.HashValueWith384(input.PhoneNumber);
+                //var hashedPhone = HashingHelper.HashValueWith384(input.PhoneNumber);
 
-                var user = _context.Users.Where(u => (u.Email == hashedEmail || u.PhoneNumber == hashedPhone) 
-                && u.IsLoggedIn == false ).SingleOrDefault();
+                var user = _context.Users.Where(u => (u.Email == hashedEmail || u.PhoneNumber == input.PhoneNumber)).SingleOrDefault();
                 var otp = SendOTP(input.Email);
-                await EmailHelper.SendEmail(user.Email ?? originalUserName, otp.ToString(), "Reset Password", "Reset Password Done Successfully");
+                await EmailHelper.SendEmail(input.Email, otp.ToString(), "Reset Password", "Reset Password Done Successfully");
 
                 if (user == null)
                 {
@@ -163,7 +175,7 @@ namespace Picktime.Services
         public async Task<bool> SendOTP(string email)
         {
             var hashedEmail = HashingHelper.HashValueWith384(email);
-            var user = _context.Users.Where(u => u.Email == hashedEmail && u.IsLoggedIn == false).SingleOrDefault();
+            var user = _context.Users.Where(u => u.Email == hashedEmail).SingleOrDefault();
             if (user == null)
             {
                 return false;
@@ -224,9 +236,10 @@ namespace Picktime.Services
 
             _context.Update(user);
             _context.SaveChanges();
-            EmailHelper.SendEmail(input.Email, user.OTPCode, "Virifying OTP", "OTP Verified Successfully");
+            EmailHelper.SendEmail(input.Email, user.OTPCode, "Verifying OTP", "OTP Verified Successfully");
+            var role = user.IsAdmin ? "Admin" : "Client";
             //for client false , to be an admin must be true argument 
-            var response = TokenHelper.GenerateJWTToken(user.Id.ToString(), "Client");
+            var response = TokenHelper.GenerateJWTToken(user, role);
             return response;
         }
 

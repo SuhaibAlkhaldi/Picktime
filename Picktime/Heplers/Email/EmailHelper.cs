@@ -8,8 +8,8 @@ namespace Picktime.Heplers.Email
     { 
         public static async Task SendEmail(string email, string code, string title, string message)
         { 
-            //var apiKey = "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";
-            var apiKey = "";
+            var apiKey = "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";
+            //var apiKey = "";
             var client = new SendGridClient(apiKey);
             var from = new EmailAddress("suhaibamjad73@gmail.com", "PickTime Admin");
             var subject = title; 

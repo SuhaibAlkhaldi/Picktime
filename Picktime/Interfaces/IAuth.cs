@@ -6,7 +6,7 @@ namespace Picktime.Interfaces
     {
 
         public Task<string> SignUp(SignUpInputDTO input);
-        Task<string> SignIn(SignInInputDTO input);
+        Task<LoginResponseDTO> SignIn(SignInInputDTO input);
         Task<bool> ResetPassword(ResetPasswordInputDTO input);
 
         Task<string> Verification(VerificationInputDTO input);

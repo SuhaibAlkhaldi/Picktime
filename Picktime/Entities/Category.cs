@@ -4,7 +4,7 @@
     {
         public string CategoryName { get; set; }
         public string Icon {  get; set; }
-        public ICollection<Providers> ServiceProviders { get; set; }
+        public ICollection<Provider> ServiceProviders { get; set; }
 
     }
 }
