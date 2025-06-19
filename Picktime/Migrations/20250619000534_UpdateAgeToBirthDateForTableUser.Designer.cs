@@ -12,8 +12,8 @@ using Picktime.Context;
 namespace Picktime.Migrations
 {
     [DbContext(typeof(PickTimeDbContext))]
-    [Migration("20250617191559_UpdateUserEntity")]
-    partial class UpdateUserEntity
+    [Migration("20250619000534_UpdateAgeToBirthDateForTableUser")]
+    partial class UpdateAgeToBirthDateForTableUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,14 +72,11 @@ namespace Picktime.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ServicesEntityId");
 
-                    b.HasIndex("UsersId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
                 });
@@ -119,6 +116,18 @@ namespace Picktime.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryName = "Bank",
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9000),
+                            Icon = "fa-solid fa-building-columns",
+                            IsActive = true,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Picktime.Entities.LockUpItems", b =>
@@ -165,7 +174,7 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 22, 15, 58, 684, DateTimeKind.Local).AddTicks(9943),
+                            CreationDate = new DateTime(2025, 6, 19, 3, 5, 34, 282, DateTimeKind.Local).AddTicks(8979),
                             Discount = 0.1f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -176,7 +185,7 @@ namespace Picktime.Migrations
                         {
                             Id = 2,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 22, 15, 58, 684, DateTimeKind.Local).AddTicks(9947),
+                            CreationDate = new DateTime(2025, 6, 19, 3, 5, 34, 282, DateTimeKind.Local).AddTicks(8981),
                             Discount = 0.2f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -187,7 +196,7 @@ namespace Picktime.Migrations
                         {
                             Id = 3,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 22, 15, 58, 684, DateTimeKind.Local).AddTicks(9948),
+                            CreationDate = new DateTime(2025, 6, 19, 3, 5, 34, 282, DateTimeKind.Local).AddTicks(8982),
                             Discount = 0.3f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -233,23 +242,20 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 17, 22, 15, 58, 684, DateTimeKind.Local).AddTicks(9745),
+                            CreationDate = new DateTime(2025, 6, 19, 3, 5, 34, 282, DateTimeKind.Local).AddTicks(8846),
                             IsActive = true,
                             Name = "Coupon",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Providers", b =>
+            modelBuilder.Entity("Picktime.Entities.Provider", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("AverageTime")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -286,10 +292,24 @@ namespace Picktime.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("ServiceProviders");
+                    b.ToTable("Providers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryId = 1,
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9016),
+                            Description = "Arab Bank",
+                            IsActive = true,
+                            Logo = "fa-solid fa-kaaba",
+                            Name = "Arab Bank",
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Reviews", b =>
+            modelBuilder.Entity("Picktime.Entities.ProviderService", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -297,57 +317,8 @@ namespace Picktime.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<float>("Rate")
-                        .HasColumnType("real");
-
-                    b.Property<int>("ServiceProviderID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceProvidersId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceProvidersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("Reviews");
-                });
-
-            modelBuilder.Entity("Picktime.Entities.ServicesEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<TimeOnly>("ActualEstimatedTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -360,9 +331,8 @@ namespace Picktime.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EstimatedTime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<TimeOnly>("ExpectedEstimatedTime")
+                        .HasColumnType("time");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
@@ -371,10 +341,10 @@ namespace Picktime.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ServiceProviderId")
+                    b.Property<int>("ProviderId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceProvidersId")
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
@@ -383,17 +353,128 @@ namespace Picktime.Migrations
                     b.Property<DateTime>("UpdatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserCount")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ServiceProvidersId");
+                    b.HasIndex("ProviderId");
 
-                    b.ToTable("Services");
+                    b.ToTable("ProviderServices");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 30),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9032),
+                            Description = "Service Time 1m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 1, 0),
+                            IsActive = true,
+                            Name = "1M Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ActualEstimatedTime = new TimeOnly(0, 2, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9039),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9041),
+                            Description = "Service Time 1m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 1, 0),
+                            IsActive = true,
+                            Name = "1m Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 30),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9043),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9044),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9046),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 1,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9048),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ActualEstimatedTime = new TimeOnly(0, 1, 0),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9050),
+                            Description = "Service Time 2m ",
+                            ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
+                            IsActive = true,
+                            Name = "2m Service",
+                            ProviderId = 1,
+                            Status = 2,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Users", b =>
+            modelBuilder.Entity("Picktime.Entities.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -401,8 +482,8 @@ namespace Picktime.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<float>("Age")
-                        .HasColumnType("real");
+                    b.Property<DateOnly?>("Birthdate")
+                        .HasColumnType("date");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -429,13 +510,16 @@ namespace Picktime.Migrations
                     b.Property<bool>("IsAdmin")
                         .HasColumnType("bit");
 
-                    b.Property<bool?>("IsLoggedIn")
+                    b.Property<bool>("IsLoggedIn")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVerfied")
+                    b.Property<bool?>("IsVerfied")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastLoginTime")
+                    b.Property<string>("LastLoggedInDeviceAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastLoginTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("LastName")
@@ -459,6 +543,9 @@ namespace Picktime.Migrations
                     b.Property<int>("Points")
                         .HasColumnType("int");
 
+                    b.Property<int>("SelectedLanguage")
+                        .HasColumnType("int");
+
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -468,19 +555,105 @@ namespace Picktime.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Birthdate = new DateOnly(2002, 4, 11),
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9071),
+                            Email = "Seed@PicTime.com",
+                            FirstName = "seed",
+                            Gender = "Robo",
+                            IsActive = true,
+                            IsAdmin = true,
+                            IsLoggedIn = false,
+                            LastName = "Root",
+                            Password = "0000000000",
+                            PhoneNumber = "07777777777",
+                            Points = 0,
+                            SelectedLanguage = 0,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("Picktime.Entities.UserReviewService", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProviderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProviderServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<float>("Rate")
+                        .HasColumnType("real");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.HasIndex("ProviderServiceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserReviewServices");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "From Seed",
+                            CreatedBy = "Seed",
+                            CreationDate = new DateTime(2025, 6, 19, 0, 5, 34, 282, DateTimeKind.Utc).AddTicks(9242),
+                            IsActive = true,
+                            ProviderServiceId = 1,
+                            Rate = 2f,
+                            UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("Picktime.Entities.Booking", b =>
                 {
-                    b.HasOne("Picktime.Entities.ServicesEntity", "ServicesEntity")
+                    b.HasOne("Picktime.Entities.ProviderService", "ServicesEntity")
                         .WithMany("Bookings")
                         .HasForeignKey("ServicesEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Picktime.Entities.Users", "Users")
+                    b.HasOne("Picktime.Entities.User", "Users")
                         .WithMany("Bookings")
-                        .HasForeignKey("UsersId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -500,7 +673,7 @@ namespace Picktime.Migrations
                     b.Navigation("LockUpType");
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Providers", b =>
+            modelBuilder.Entity("Picktime.Entities.Provider", b =>
                 {
                     b.HasOne("Picktime.Entities.Category", "Categories")
                         .WithMany("ServiceProviders")
@@ -511,34 +684,38 @@ namespace Picktime.Migrations
                     b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Reviews", b =>
+            modelBuilder.Entity("Picktime.Entities.ProviderService", b =>
                 {
-                    b.HasOne("Picktime.Entities.Providers", "ServiceProviders")
-                        .WithMany("Reviews")
-                        .HasForeignKey("ServiceProvidersId")
+                    b.HasOne("Picktime.Entities.Provider", "Providers")
+                        .WithMany("ProviderServices")
+                        .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Picktime.Entities.Users", "Users")
-                        .WithMany("Reviews")
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ServiceProviders");
-
-                    b.Navigation("Users");
+                    b.Navigation("Providers");
                 });
 
-            modelBuilder.Entity("Picktime.Entities.ServicesEntity", b =>
+            modelBuilder.Entity("Picktime.Entities.UserReviewService", b =>
                 {
-                    b.HasOne("Picktime.Entities.Providers", "ServiceProviders")
-                        .WithMany("Services")
-                        .HasForeignKey("ServiceProvidersId")
+                    b.HasOne("Picktime.Entities.Provider", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProviderId");
+
+                    b.HasOne("Picktime.Entities.ProviderService", "ProviderServices")
+                        .WithMany("UserReviewServices")
+                        .HasForeignKey("ProviderServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ServiceProviders");
+                    b.HasOne("Picktime.Entities.User", "Users")
+                        .WithMany("UserReviewServices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProviderServices");
+
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Picktime.Entities.Category", b =>
@@ -551,23 +728,25 @@ namespace Picktime.Migrations
                     b.Navigation("Items");
                 });
 
-            modelBuilder.Entity("Picktime.Entities.Providers", b =>
+            modelBuilder.Entity("Picktime.Entities.Provider", b =>
                 {
+                    b.Navigation("ProviderServices");
+
                     b.Navigation("Reviews");
-
-                    b.Navigation("Services");
                 });
 
-            modelBuilder.Entity("Picktime.Entities.ServicesEntity", b =>
-                {
-                    b.Navigation("Bookings");
-                });
-
-            modelBuilder.Entity("Picktime.Entities.Users", b =>
+            modelBuilder.Entity("Picktime.Entities.ProviderService", b =>
                 {
                     b.Navigation("Bookings");
 
-                    b.Navigation("Reviews");
+                    b.Navigation("UserReviewServices");
+                });
+
+            modelBuilder.Entity("Picktime.Entities.User", b =>
+                {
+                    b.Navigation("Bookings");
+
+                    b.Navigation("UserReviewServices");
                 });
 #pragma warning restore 612, 618
         }

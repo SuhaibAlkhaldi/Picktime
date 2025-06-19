@@ -1,4 +1,6 @@
-﻿namespace Picktime.DTOs
+﻿using Picktime.Heplers.Enums;
+
+namespace Picktime.DTOs
 {
     public class SignUpInputDTO
     {
@@ -7,7 +9,8 @@
         public string Email { get; set; }
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
-        public float Age { get; set; }
+        public DateOnly? Birthdate { get; set; }
         public string Gender { get; set; }
+        public ELanguage Language { get; set; }
     }
 }

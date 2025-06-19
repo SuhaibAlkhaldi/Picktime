@@ -1,4 +1,6 @@
-﻿namespace Picktime.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Picktime.Entities
 {
     public class Booking : SharedClass
     {
@@ -6,11 +8,11 @@
         public string Status { get; set; }
         public decimal ExpectedArrivalTime { get; set; }
         public int TicketNumber { get; set; }
+        [ForeignKey("UserId")]
         public int UserId { get; set; }
-        public Users Users { get; set; }
+        public User Users { get; set; }
+        [ForeignKey("ServiceId")]
         public int ServiceId { get; set; }
-        public ServicesEntity ServicesEntity { get; set; }
-
-
+        public ProviderService ServicesEntity { get; set; }
     }
 }
