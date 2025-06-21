@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Picktime.Context;
 
@@ -11,9 +12,11 @@ using Picktime.Context;
 namespace Picktime.Migrations
 {
     [DbContext(typeof(PickTimeDbContext))]
-    partial class PickTimeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250621082744_AddNewProprityInBooking")]
+    partial class AddNewProprityInBooking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,7 +122,7 @@ namespace Picktime.Migrations
                             Id = 1,
                             CategoryName = "Bank",
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3210),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8730),
                             Icon = "fa-solid fa-building-columns",
                             IsActive = true,
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -170,7 +173,7 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 21, 12, 50, 29, 277, DateTimeKind.Local).AddTicks(3170),
+                            CreationDate = new DateTime(2025, 6, 21, 11, 27, 43, 370, DateTimeKind.Local).AddTicks(8696),
                             Discount = 0.1f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -181,7 +184,7 @@ namespace Picktime.Migrations
                         {
                             Id = 2,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 21, 12, 50, 29, 277, DateTimeKind.Local).AddTicks(3173),
+                            CreationDate = new DateTime(2025, 6, 21, 11, 27, 43, 370, DateTimeKind.Local).AddTicks(8700),
                             Discount = 0.2f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -192,7 +195,7 @@ namespace Picktime.Migrations
                         {
                             Id = 3,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 21, 12, 50, 29, 277, DateTimeKind.Local).AddTicks(3175),
+                            CreationDate = new DateTime(2025, 6, 21, 11, 27, 43, 370, DateTimeKind.Local).AddTicks(8701),
                             Discount = 0.3f,
                             IsActive = true,
                             LockUpTypeId = 1,
@@ -238,7 +241,7 @@ namespace Picktime.Migrations
                         {
                             Id = 1,
                             CreatedBy = "System",
-                            CreationDate = new DateTime(2025, 6, 21, 12, 50, 29, 277, DateTimeKind.Local).AddTicks(2976),
+                            CreationDate = new DateTime(2025, 6, 21, 11, 27, 43, 370, DateTimeKind.Local).AddTicks(8512),
                             IsActive = true,
                             Name = "Coupon",
                             UpdatedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -296,7 +299,7 @@ namespace Picktime.Migrations
                             Id = 1,
                             CategoryId = 1,
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3239),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8760),
                             Description = "Arab Bank",
                             IsActive = true,
                             Logo = "fa-solid fa-kaaba",
@@ -361,7 +364,7 @@ namespace Picktime.Migrations
                             Id = 1,
                             ActualEstimatedTime = new TimeOnly(0, 1, 30),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3268),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8785),
                             Description = "Service Time 1m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 1, 0),
                             IsActive = true,
@@ -375,7 +378,7 @@ namespace Picktime.Migrations
                             Id = 2,
                             ActualEstimatedTime = new TimeOnly(0, 2, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3275),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8796),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -389,7 +392,7 @@ namespace Picktime.Migrations
                             Id = 3,
                             ActualEstimatedTime = new TimeOnly(0, 1, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3279),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8800),
                             Description = "Service Time 1m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 1, 0),
                             IsActive = true,
@@ -403,7 +406,7 @@ namespace Picktime.Migrations
                             Id = 4,
                             ActualEstimatedTime = new TimeOnly(0, 1, 30),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3282),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8803),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -417,7 +420,7 @@ namespace Picktime.Migrations
                             Id = 5,
                             ActualEstimatedTime = new TimeOnly(0, 1, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3285),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8806),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -431,7 +434,7 @@ namespace Picktime.Migrations
                             Id = 6,
                             ActualEstimatedTime = new TimeOnly(0, 1, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3288),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8808),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -445,7 +448,7 @@ namespace Picktime.Migrations
                             Id = 7,
                             ActualEstimatedTime = new TimeOnly(0, 1, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3291),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8811),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -459,7 +462,7 @@ namespace Picktime.Migrations
                             Id = 8,
                             ActualEstimatedTime = new TimeOnly(0, 1, 0),
                             CreatedBy = "Seed",
-                            CreationDate = new DateTime(2025, 6, 21, 9, 50, 29, 277, DateTimeKind.Utc).AddTicks(3294),
+                            CreationDate = new DateTime(2025, 6, 21, 8, 27, 43, 370, DateTimeKind.Utc).AddTicks(8814),
                             Description = "Service Time 2m ",
                             ExpectedEstimatedTime = new TimeOnly(0, 2, 0),
                             IsActive = true,
@@ -551,48 +554,6 @@ namespace Picktime.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Picktime.Entities.UserRedeemedCoupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LockUpItemId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("RedeemedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LockUpItemId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserRedeemedCoupons");
                 });
 
             modelBuilder.Entity("Picktime.Entities.UserReviewService", b =>
@@ -696,25 +657,6 @@ namespace Picktime.Migrations
                         .IsRequired();
 
                     b.Navigation("Providers");
-                });
-
-            modelBuilder.Entity("Picktime.Entities.UserRedeemedCoupon", b =>
-                {
-                    b.HasOne("Picktime.Entities.LockUpItems", "LockUpItem")
-                        .WithMany()
-                        .HasForeignKey("LockUpItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Picktime.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("LockUpItem");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Picktime.Entities.UserReviewService", b =>

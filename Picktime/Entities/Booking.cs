@@ -9,6 +9,7 @@ namespace Picktime.Entities
         public EServicesActions Status { get; set; } // used enum (EServicesActions) values
         public DateTime ExpectedArrivalTime { get; set; }
         public int TicketNumber { get; set; }
+        public bool IsReviewed { get; set; } = false;
         [ForeignKey("UserId")]
         public int UserId { get; set; }
         public User Users { get; set; }

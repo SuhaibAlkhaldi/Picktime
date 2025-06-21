@@ -19,6 +19,8 @@ builder.Services.AddScoped<IAuth, AuthService>(); //configure for my service
 builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<IBooking, BookingService>();
 builder.Services.AddScoped<IProviderService, ProviderService>();
+builder.Services.AddScoped<IReview, ReviwesService>();
+builder.Services.AddScoped<ICopouns, CopounsService>();
 builder.Services.AddScoped<BaseDTO>();
 builder.Services.AddHttpContextAccessor();
 var app = builder.Build();

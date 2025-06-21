@@ -15,6 +15,7 @@ namespace Picktime.Context
         public DbSet<UserReviewService> UserReviewServices { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Category> categories { get; set; }
+        public DbSet<UserRedeemedCoupon> UserRedeemedCoupons { get; set; }
         public PickTimeDbContext(DbContextOptions options) : base(options)
         {
         }
