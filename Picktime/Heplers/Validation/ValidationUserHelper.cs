@@ -1,4 +1,7 @@
-﻿namespace Picktime.Heplers.Validation
+﻿using Picktime.DTOs.Validation;
+using System.Text.RegularExpressions;
+
+namespace Picktime.Heplers.Validation
 {
     public static class ValidationUserHelper
     {
@@ -36,106 +39,30 @@
         }
 
 
-
-
-
-        public static bool IsEmailValid(string email)
+        public static UserNameDTO GetVarifiedUserName(string userName)
         {
-            if (string.IsNullOrWhiteSpace(email))
-                throw new Exception("Email is required.");
-
-            int atIndex = email.IndexOf('@');
-            int dotIndex = email.LastIndexOf('.');
-
-            if (atIndex < 1 || dotIndex < atIndex + 2 || dotIndex >= email.Length - 2)
-                throw new Exception("Email format is invalid.");
-
-            string domain = email.Substring(atIndex + 1).ToLower();
-
-
-            string[] allowedDomains = { "gmail.com", "hotmail.com", "outlook.com", "zoho.com" };
-
-            if (!allowedDomains.Contains(domain))
-                throw new Exception("Only Gmail, Hotmail, Outlook, or Zoho emails are allowed.");
-
-            string localPart = email.Substring(0, atIndex);
-
-            foreach (char c in localPart)
+            return new UserNameDTO
             {
-                if (!char.IsLetterOrDigit(c) && c != '.' && c != '_' && c != '%' && c != '+' && c != '-')
-                    throw new Exception("Email contains invalid characters.");
-            }
-
-            return true;
+                IsVarifiedEamil = IsValidEmail(userName),
+                IsVarifiedPhoneNumber = IsValidPhoneNumber(userName),
+            };
         }
 
-        public static bool IsPhoneNumberValid(string phoneNumber)
+        public static bool IsValidPhoneNumber(string phoneNumber)
         {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-                throw new Exception("Phone number is required.");
+            string pattern = @"^(077|078|079)\d{7}$";
+            return Regex.IsMatch(phoneNumber, pattern);
+        }
 
-            if (phoneNumber.Length != 10)
-                throw new Exception("Phone number must be exactly 10 digits.");
-
-            if (!phoneNumber.StartsWith("077") &&
-                !phoneNumber.StartsWith("078") &&
-                !phoneNumber.StartsWith("079"))
-                throw new Exception("Phone number must start with 077, 078, or 079.");
-
-            if (!phoneNumber.All(char.IsDigit))
-                throw new Exception("Phone number must contain only digits.");
-
-            return true;
+        public static bool IsValidEmail(string email)
+        {
+            string pattern = @"^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|zoho\.com)$";
+            return Regex.IsMatch(email, pattern);
         }
         public static bool IsPasswordValid(string password)
         {
-            if (string.IsNullOrWhiteSpace(password))
-                throw new Exception("Password is required.");
-
-            if (password.Length < 8)
-                throw new Exception("Password must be at least 8 characters long.");
-
-            if (!password.Any(char.IsUpper))
-                throw new Exception("Password must contain at least one uppercase letter.");
-
-            if (!password.Any(char.IsLower))
-                throw new Exception("Password must contain at least one lowercase letter.");
-
-            if (!password.Any(char.IsDigit))
-                throw new Exception("Password must contain at least one number.");
-
-            if (!password.Any(c => "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~".Contains(c)))
-                throw new Exception("Password must contain at least one special character.");
-
-            return true;
+            string pattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$";
+            return Regex.IsMatch(password, pattern);
         }
-
-
-
-        public static bool IsValidBirthDate(DateTime birthDate, int minimumAge = 18)
-        {
-
-            if (birthDate == default)
-                throw new Exception("Birthdate is required.");
-
-
-            if (birthDate > DateTime.Today)
-                throw new Exception("Birthdate cannot be in the future.");
-
-
-            var today = DateTime.Today;
-            int age = today.Year - birthDate.Year;
-
-
-            if (birthDate > today.AddYears(-age))
-                age--;
-
-            if (age < minimumAge)
-                throw new Exception($"User must be at least {minimumAge} years old.");
-
-            return true;
-        }
-
-
     }
 }

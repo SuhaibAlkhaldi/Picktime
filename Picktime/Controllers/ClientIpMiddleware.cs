@@ -1,4 +1,4 @@
-﻿using Picktime.DTOs;
+﻿using Picktime.DTOs.Auth;
 
 namespace Picktime.Controllers
 {
@@ -28,7 +28,7 @@ namespace Picktime.Controllers
             // 2. Fallback to IP-based fingerprint
             var ip = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
             var userAgent = context.Request.Headers.UserAgent.ToString();
-            return $"IP:{ip}-UA:{userAgent.GetHashCode()}";
+            return $"IP:{ip}-UA:{userAgent}";
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Picktime.DTOs.Category;
 using Picktime.Interfaces;
 
 namespace Picktime.Controllers
@@ -13,6 +15,23 @@ namespace Picktime.Controllers
         public CategoriesController(ICategory category)
         {
             _category = category;
+        }
+
+
+
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetOneCategory(int categoryId)
+        {
+            try
+            {
+                var categories = await _category.GetOneCategory(categoryId);
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
 
@@ -31,6 +50,52 @@ namespace Picktime.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddCategory(AddCategoryInputDTO input)
+        {
+            try
+            {
+                var categories = await _category.AddCategory(input);
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
 
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateCategory(UpdateCategoryInputDTO input)
+        {
+            try
+            {
+                var categories = await _category.UpdateCategory(input);
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteCategory(int categoryId)
+        {
+            try
+            {
+                var categories = await _category.DeleteCategory(categoryId);
+                return Ok(categories);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

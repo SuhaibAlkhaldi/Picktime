@@ -2,7 +2,7 @@
 
 namespace Picktime.Entities
 {
-    public class LockUpItems : SharedClass
+    public class LockUpItems : BaseEntity
     {
         public int Points { get; set; }
         public float Discount { get; set; }

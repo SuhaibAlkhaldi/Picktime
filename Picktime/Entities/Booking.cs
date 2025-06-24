@@ -2,7 +2,7 @@
 
 namespace Picktime.Entities
 {
-    public class Booking : SharedClass
+    public class Booking : BaseEntity
     {
         public string Description { get; set; }
         public string Status { get; set; }
@@ -11,8 +11,9 @@ namespace Picktime.Entities
         [ForeignKey("UserId")]
         public int UserId { get; set; }
         public User Users { get; set; }
-        [ForeignKey("ServiceId")]
-        public int ServiceId { get; set; }
-        public ProviderService ServicesEntity { get; set; }
+        public int ProviderServiceId { get; set; }
+
+        [ForeignKey("ProviderServiceId")]
+        public ProviderServices ProviderService { get; set; }
     }
 }

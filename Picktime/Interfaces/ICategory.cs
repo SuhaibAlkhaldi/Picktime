@@ -1,9 +1,14 @@
 ﻿using Picktime.DTOs;
+using Picktime.DTOs.Category;
 
 namespace Picktime.Interfaces
 {
     public interface ICategory
     {
-        public Task<List<GetAllCategoriesOutputDTO>> GetAllCategories();
+        public Task<AppResponse<GetCategoriesOutputDTO>> GetOneCategory(int categoryId);
+        public Task<AppResponse<List<GetCategoriesOutputDTO>>> GetAllCategories();
+        public Task<AppResponse<CategoryOutputDTO>> AddCategory(AddCategoryInputDTO input);
+        public Task<AppResponse<CategoryOutputDTO>> UpdateCategory(UpdateCategoryInputDTO input);
+        public Task<AppResponse> DeleteCategory(int categoryId);
     }
 }
