@@ -1,4 +1,4 @@
-﻿namespace Picktime.DTOs
+﻿namespace Picktime.DTOs.Coupon
 {
     public class PointsSummaryDTO
     {

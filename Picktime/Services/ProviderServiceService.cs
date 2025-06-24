@@ -3,10 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
 using Picktime.DTOs;
 using Picktime.DTOs.Category;
+using Picktime.DTOs.Errors;
 using Picktime.DTOs.Provider;
 using Picktime.DTOs.ProviderService;
 using Picktime.Entities;
-using Picktime.Heplers;
+using Picktime.Heplers.Error;
 using Picktime.Interfaces;
 using System.Runtime.CompilerServices;
 

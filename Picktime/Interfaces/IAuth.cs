@@ -1,5 +1,5 @@
-﻿using Picktime.DTOs;
-using Picktime.DTOs.Auth;
+﻿using Picktime.DTOs.Auth;
+using Picktime.DTOs.Errors;
 
 namespace Picktime.Interfaces
 {

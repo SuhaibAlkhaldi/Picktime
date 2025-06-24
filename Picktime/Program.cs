@@ -6,8 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Picktime.Context;
-using Picktime.Controllers;
-using Picktime.DTOs;
 using Picktime.DTOs.Auth;
 using Picktime.DTOs.JWT;
 using Picktime.Heplers.Swagger;
@@ -29,11 +27,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-NBIV360;Initial Catalog=PickTimeDB;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"));
 builder.Services.AddScoped<IAuth, AuthService>(); //configure for my service 
 builder.Services.AddScoped<ICategory, CategoryService>();
-
+builder.Services.AddScoped<IBooking, BookingService>();
 builder.Services.AddScoped<IProvider, ProviderService>();
 builder.Services.AddScoped<IProviderServiceService, ProviderServiceService>();
-builder.Services.AddScoped<IUserReview, UserReviewService>();
-builder.Services.AddScoped<ILockUpItem, LockUpItemService>();
+builder.Services.AddScoped<IReview, ReviewService>();
+builder.Services.AddScoped<ICoupon, CouponsService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddScoped<BaseDTO>();
 builder.Services.AddScoped<SessionProvider>();
@@ -85,11 +83,11 @@ builder.Services.AddAuthorization();
 
 
 
-builder.Services.AddScoped<IBooking, BookingService>();
-builder.Services.AddScoped<IProviderService, ProviderService>();
-builder.Services.AddScoped<IReview, ReviwesService>();
-builder.Services.AddScoped<ICopouns, CopounsService>();
-builder.Services.AddScoped<BaseDTO>();
+//builder.Services.AddScoped<IBooking, BookingService>();
+//builder.Services.AddScoped<IProviderService, ProviderService>();
+//builder.Services.AddScoped<IReview, ReviewService>();
+//builder.Services.AddScoped<ICopouns, CopounsService>();
+//builder.Services.AddScoped<BaseDTO>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

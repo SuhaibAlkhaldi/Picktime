@@ -1,4 +1,4 @@
-﻿namespace Picktime.DTOs
+﻿namespace Picktime.DTOs.Auth
 {
     public class ClientInfo
     {

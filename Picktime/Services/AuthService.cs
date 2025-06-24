@@ -13,10 +13,10 @@ using Picktime.Heplers.Validation;
 using Picktime.Interfaces;
 using SendGrid.Helpers.Mail;
 using System.Security.Claims;
-using Picktime.DTOs;
 using Picktime.DTOs.JWT;
-using Picktime.Heplers;
 using Picktime.DTOs.Category;
+using Picktime.DTOs.Errors;
+using Picktime.Heplers.Error;
 
 namespace Picktime.Services
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Picktime.DTOs;
+using Picktime.DTOs.Booking;
 using Picktime.Interfaces;
 
 namespace Picktime.Controllers

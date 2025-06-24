@@ -1,6 +1,6 @@
 ﻿using Picktime.DTOs.Auth;
 
-namespace Picktime.Controllers
+namespace Picktime.Middleware
 {
 
     public class MacAddressMiddleware

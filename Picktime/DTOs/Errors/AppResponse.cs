@@ -1,6 +1,6 @@
 ﻿using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Picktime.DTOs
+namespace Picktime.DTOs.Errors
 {
     public class AppResponse
     {
@@ -25,6 +25,11 @@ namespace Picktime.DTOs
         }
 
         public static AppResponse Success()
+        {
+            return new AppResponse(ResponseStatus.Ok);
+        }
+
+        public static AppResponse Success(string message)
         {
             return new AppResponse(ResponseStatus.Ok);
         }

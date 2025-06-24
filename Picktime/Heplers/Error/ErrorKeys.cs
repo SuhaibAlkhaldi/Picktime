@@ -1,6 +1,6 @@
 ﻿using Picktime.Entities;
 
-namespace Picktime.Heplers
+namespace Picktime.Heplers.Error
 {
     public static class ErrorKeys
     {
@@ -30,5 +30,11 @@ namespace Picktime.Heplers
         public const string ErrorInSendOTP = "ERROR_IN_SEND_OTP";
         public const string ErrorInVerification= "ERROR_IN_VERIFICATION";
         public const string ErrorInSignOut = "ERROR_IN_SIGNOUT";
+        public const string ErrorInBookingComplete = "ERROR_IN_BOOKING_COMPLETE";
+        public const string ErrorInCreatingBooking = "ERROR_IN_CREATING_BOOKING";
+        public const string ErrorInGetUserHistory = "ERROR_IN_GET_USER_HISTORY";
+        public const string ErrorInGetAllPoints = "ERROR_IN_GET_ALL_POINTS";
+        public const string ErrorInGetReviews = "ERROR_IN_GET_REVIEWS";
+        public const string ErrorInCreateReviews = "ERROR_IN_ CREATE_REVIEWS";
     }
 }

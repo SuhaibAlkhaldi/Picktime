@@ -4,9 +4,11 @@ using Picktime.Context;
 using Picktime.DTOs;
 using Picktime.DTOs.Auth;
 using Picktime.DTOs.Category;
+using Picktime.DTOs.Errors;
 using Picktime.DTOs.Provider;
 using Picktime.Entities;
-using Picktime.Heplers;
+using Picktime.Heplers.Error;
+using Picktime.Heplers.Image;
 using Picktime.Interfaces;
 
 namespace Picktime.Services
@@ -166,11 +168,18 @@ namespace Picktime.Services
                     return AppResponse<GetProviderOutputDTO>.Error(new Error { Message = "Provider Already Exist" });
 
                 }
+
+                string? imagePath = null;
+
+                if (input.Logo != null)
+                {
+                    imagePath = await ImageHelper.SaveImageAsync(input.Logo);
+                }
                 var addProvider = new Provider
                 {
                     Name = input.Name,
                     Description = input.Description,
-                    Logo = input.Logo,
+                    Logo = imagePath,
                     CategoryId = input.CategoryId,
                 };
                 await _context.Providers.AddAsync(addProvider);
@@ -182,7 +191,7 @@ namespace Picktime.Services
                         Id = addProvider.Id,
                         Name = input.Name,
                         Description = input.Description,
-                        Logo = input.Logo,
+                        Logo = imagePath,
                         CategoryId = input.CategoryId
                     }
                 };
