@@ -1,18 +1,19 @@
 ﻿using Picktime.DTOs;
+using Picktime.DTOs.Auth;
 
 namespace Picktime.Interfaces
 {
     public interface IAuth
     {
 
-        public Task<string> SignUp(SignUpInputDTO input);
-        Task<LoginResponseDTO> SignIn(SignInInputDTO input);
-        Task<bool> ResetPassword(ResetPasswordInputDTO input);
-
+        Task<AppResponse> SignUp(SignUpDTO input);
+        Task<AppResponse> SignUpCreator(SignUpCreatorDTO input);
+        Task<AppResponse<LoginResponseDTO>> SignIn(SignInInputDTO input);
+        Task<AppResponse<bool>> ResetPassword(ResetPasswordInputDTO input);
         Task<string> Verification(VerificationInputDTO input);
-        Task<bool> SendOTP(string email);
-      
-        Task<bool> SignOut(int userId);
+        Task<AppResponse<bool>> SendOTP(string email);
+        Task<AppResponse<bool>> SignOut(int userId);
+        Task<bool> ToggleUserBlockStatus(int userId);
 
     }
 }

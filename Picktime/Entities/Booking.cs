@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Picktime.Entities
 {
-    public class Booking : SharedClass
+    public class Booking : BaseEntity
     {
         public string Description { get; set; }
         public EServicesActions Status { get; set; } // used enum (EServicesActions) values
@@ -13,9 +13,16 @@ namespace Picktime.Entities
         [ForeignKey("UserId")]
         public int UserId { get; set; }
         public User Users { get; set; }
+
+        public int ProviderServiceId { get; set; }
+
+        [ForeignKey("ProviderServiceId")]
+        public ProviderServices ProviderService { get; set; }
+
 public int ProviderServiceId { get; set; }
 
    [ForeignKey("ProviderServiceId")]
    public ProviderService ProviderService { get; set; }
+
     }
 }

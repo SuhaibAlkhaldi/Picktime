@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Picktime.DTOs;
+using Picktime.DTOs.Auth;
 using Picktime.Entities;
 using Picktime.Interfaces;
 
@@ -23,11 +24,26 @@ namespace Picktime.Controllers
 
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> SignUp(SignUpInputDTO input)
+        public async Task<IActionResult> SignUp(SignUpDTO input)
         {
             try
             {
                 var result = await _IAuth.SignUp(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [HttpPost("[action]")]
+        [Authorize]
+        public async Task<IActionResult> SignUpCreators(SignUpCreatorDTO input)
+        {
+            try
+            {
+                var result = await _IAuth.SignUpCreator(input);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -65,21 +81,12 @@ namespace Picktime.Controllers
             }
         }
 
-
-
-
-
-
-
         [HttpPost("[action]")]
         public async Task<IActionResult> SendOTP(string email)
         {
             try
             {
                 var response = await _IAuth.SendOTP(email);
-                if (!response)
-                    return BadRequest("Invalid email or already logged in.");
-
                 return Ok(response);
             }
             catch (Exception ex)
@@ -93,9 +100,7 @@ namespace Picktime.Controllers
             try
             {
                 var response = await _IAuth.SignOut(userId);
-                if (!response)
-                    return NotFound("User not found or already signed out.");
-
+               
                 return Ok(response);
             }
             catch (Exception ex)
@@ -109,6 +114,19 @@ namespace Picktime.Controllers
             try
             {
                 var response = await _IAuth.Verification(input);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [HttpPatch("[action]")]
+        public async Task<IActionResult> ToggleUserBlockStatus(int userId)
+        {
+            try
+            {
+                var response = await _IAuth.ToggleUserBlockStatus(userId);
                 return Ok(response);
             }
             catch (Exception ex)

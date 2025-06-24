@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Picktime.DTOs;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Picktime.DTOs.Provider;
 using Picktime.Interfaces;
 using System.Management;
 
@@ -9,15 +10,15 @@ namespace Picktime.Controllers
     [ApiController]
     public class ProviderController : ControllerBase
     {
-        private IProviderService _providerService;
+        private IProvider _providerService;
 
-        public ProviderController(IProviderService providerService)
+        public ProviderController(IProvider providerService)
         {
             _providerService = providerService;
         }
 
 
-
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetProviderDetails(int id)
         {
@@ -34,7 +35,7 @@ namespace Picktime.Controllers
 
 
 
-
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetAllProvider()
         {
@@ -53,7 +54,7 @@ namespace Picktime.Controllers
 
 
 
-
+        [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> GetCalculatedAverageServiceTime(RequestCalculateAverageServiceTimeDTO requestDTO)
         {
@@ -68,12 +69,69 @@ namespace Picktime.Controllers
             }
         }
 
+
+
+
+        [AllowAnonymous]
         [HttpPost("[action]")]
         public async Task<IActionResult> CalculateRatingByServiceProvider(RequestCalculateRatingByServiceProviderDTO requestDTO)
         {
             try
             {
                 var result = await _providerService.CalculateRatingByServiceProvider(requestDTO);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddProvider(AddProviderInputDTO input)
+        {
+            try
+            {
+                var result = await _providerService.AddProvider(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateProvider(UpdateProviderInputDTO input)
+        {
+            try
+            {
+                var result = await _providerService.UpdateProvider(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> RemoveProvider(int providerId)
+        {
+            try
+            {
+                var result = await _providerService.RemoveProvider(providerId);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -1,15 +1,22 @@
 
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using Picktime.Context;
-using Picktime.DTOs;
+using Picktime.DTOs.Auth;
 using Picktime.Entities;
 using Picktime.Heplers.Email;
+using Picktime.Heplers.Enums;
 using Picktime.Heplers.Hashing;
 using Picktime.Heplers.Token;
 using Picktime.Heplers.Validation;
 using Picktime.Interfaces;
-using System;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using SendGrid.Helpers.Mail;
+using System.Security.Claims;
+using Picktime.DTOs;
+using Picktime.DTOs.JWT;
+using Picktime.Heplers;
+using Picktime.DTOs.Category;
 
 namespace Picktime.Services
 {
@@ -17,188 +24,285 @@ namespace Picktime.Services
     {
         private readonly PickTimeDbContext _context;
         private readonly BaseDTO _baseDTO;
+        private readonly UserConfiguration _userConfiguration;
+        private readonly ITokenService _tokenService;
 
-        public AuthService(PickTimeDbContext context , BaseDTO baseDTO)
+        public AuthService(PickTimeDbContext context, BaseDTO baseDTO, UserConfiguration userConfiguration, ITokenService tokenService)
         {
             _context = context;
-            _baseDTO = baseDTO; 
+            _baseDTO = baseDTO;
+            _userConfiguration = userConfiguration;
+            _tokenService = tokenService;
         }
 
-        public async Task<string> SignUp(SignUpInputDTO input)
+        public async Task<AppResponse> SignUp(SignUpDTO input)
         {
             try
             {
-                if (ValidationUserHelper.IsFirstNameValid(input.FirstName) && ValidationUserHelper.IsLastNameValid(input.LastName) && ValidationUserHelper.IsPhoneNumberValid(input.PhoneNumber)
-                    && ValidationUserHelper.IsPasswordValid(input.Password) &&ValidationUserHelper.IsEmailValid(input.Email))
+
+                if (ValidationUserHelper.IsFirstNameValid(input.FirstName) && ValidationUserHelper.IsLastNameValid(input.LastName) && ValidationUserHelper.IsValidPhoneNumber(input.PhoneNumber)
+                    && ValidationUserHelper.IsPasswordValid(input.Password) && ValidationUserHelper.IsValidEmail(input.Email))
                 {
                     User user = new User();
 
                     user.FirstName = input.FirstName;
                     user.LastName = input.LastName;
-                    user.Email = HashingHelper.HashValueWith384(input.Email);
+                    user.Email = input.Email;
                     user.Password = HashingHelper.HashValueWith384(input.Password);
-                    user.PhoneNumber = HashingHelper.HashValueWith384(input.PhoneNumber);
+                    user.PhoneNumber = input.PhoneNumber;
                     user.Birthdate = input.Birthdate;
                     user.Gender = input.Gender;
                     user.CreationDate = DateTime.Now;
                     user.IsLoggedIn = false;
                     user.SelectedLanguage = input.Language;
-                    var otp = SendOTP(user.Email);
+                    user.UserType = UserType.Client;
+
                     await _context.Users.AddAsync(user);
                     await _context.SaveChangesAsync();
-                    await EmailHelper.SendEmail(input.Email, otp.ToString(), "Sign Up  OTP", "Complete Sign Up Operation");
-                    
+                    var otp = await SendOTP(user.Email);
+                    await EmailHelper.SendEmail(input.Email, otp.ToString(), "Sign Up  OTP", "Complete Sign Up Operation", _userConfiguration.EmailConfig);
+
                 }
-                return "Account Created Successfully";
+                return AppResponse.Success();
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return AppResponse<AppResponse>.Error(new Error { Message = ErrorKeys.ErrorInSignUp, Category = "Auth" });
             }
-            
+
         }
-
-
-
-        public async Task<LoginResponseDTO> SignIn(SignInInputDTO input)
+        public async Task<AppResponse> SignUpCreator(SignUpCreatorDTO input)
         {
             try
             {
-                if (string.IsNullOrEmpty(input.PhoneNumber) && string.IsNullOrEmpty(input.Email))
-                    throw new Exception("Email or Phone Number must be provided.");
-                string originalUserName = input.PhoneNumber ?? input.Email;
 
+                if (ValidationUserHelper.IsFirstNameValid(input.FirstName) && ValidationUserHelper.IsLastNameValid(input.LastName) && ValidationUserHelper.IsValidPhoneNumber(input.PhoneNumber)
+                    && ValidationUserHelper.IsPasswordValid(input.Password) && ValidationUserHelper.IsValidEmail(input.Email))
+                {
+                    var selectedCategory = new Category();
+                    var selectedProvider = new Provider();
+
+
+                    if (input.CategoryId.HasValue)
+                    {
+                        selectedCategory = _context.Categories.Where(x => x.Id == input.CategoryId).FirstOrDefault();
+                        if (selectedCategory is null)
+                        {
+                            return AppResponse.Error(new Error { Message = "Category Not Found." });
+                        }
+                    }
+
+                    if (input.ProviderId.HasValue)
+                    {
+                        selectedProvider = _context.Providers.Where(x => x.Id == input.ProviderId).Include(x => x.Category).FirstOrDefault();
+                        if (selectedProvider is null)
+                        {
+                            return AppResponse.Error(new Error { Message = "Category Not Found." });
+                        }
+                    }
+
+                    User user = new User
+                    {
+                        FirstName = input.FirstName,
+                        LastName = input.LastName,
+                        Email = input.Email,
+                        Password = HashingHelper.HashValueWith384(input.Password),
+                        PhoneNumber = input.PhoneNumber,
+                        Birthdate = input.Birthdate,
+                        Gender = input.Gender,
+                        CreationDate = DateTime.Now,
+                        IsLoggedIn = false,
+                        SelectedLanguage = input.Language,
+                        UserType = input.UserType,
+                        CategoryId = input.CategoryId.HasValue ? selectedCategory.Id : input.ProviderId.HasValue ? selectedProvider.CategoryId : null,
+                        ProviderId = input.ProviderId.HasValue ? selectedProvider.Id : null,
+                    };
+
+                    await _context.Users.AddAsync(user);
+                    await _context.SaveChangesAsync();
+                }
+                return AppResponse.Success();
+            }
+            catch (Exception ex)
+            {
+                return AppResponse<AppResponse>.Error(new Error { Message = ErrorKeys.ErrorInSignUp, Category = "Auth" });
+            }
+        }
+        public async Task<AppResponse<LoginResponseDTO>> SignIn(SignInInputDTO input)
+        {
+            try
+            {
+                
+                if (string.IsNullOrEmpty(input.UserName))
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "Email or Phone Number must be provided." });
+                
+
+                var CheckUserName = ValidationUserHelper.GetVarifiedUserName(input.UserName);
 
                 var user = new User();
 
-                if (!string.IsNullOrEmpty(input.PhoneNumber))
+
+                var hasPhoneNumber = CheckUserName.IsVarifiedPhoneNumber;
+                var hasEmail = CheckUserName.IsVarifiedEamil;
+
+
+                if (!hasPhoneNumber && !hasEmail)
                 {
-                    var hashedPhone = HashingHelper.HashValueWith384(input.PhoneNumber);
-                    user = await _context.Users.Where(x => x.PhoneNumber == hashedPhone &&
-                        x.IsLoggedIn == false).SingleOrDefaultAsync();
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "Please Enter Valid Phone number Or Email." });
+                    
                 }
-                else if (!string.IsNullOrEmpty(input.Email))
+
+                user = await _context.Users.Where(x =>
+                hasPhoneNumber ? x.PhoneNumber == input.UserName :
+                hasEmail ? x.Email == input.UserName
+                : false)
+                    .FirstOrDefaultAsync();
+
+                if (user == null)
                 {
-                    var hashedEmail = HashingHelper.HashValueWith384(input.Email);
-                    user = await _context.Users.Where(x =>
-                        x.Email == hashedEmail &&
-                        x.IsLoggedIn == false).SingleOrDefaultAsync();
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "User Not Found." });
+
                 }
-                
-                if (user?.IsLoggedIn == true || user?.LastLoggedInDeviceAddress == _baseDTO.MacAddress)
+
+
+
+                if (user.IsBlocked && _userConfiguration.BlockedFeatures)
                 {
-                    await SendOTP(input.Email);
-                    return new LoginResponseDTO
+                    await SendOTP(user.Email);
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "The User is Blocked and OTP is Send By Email." });
+                }
+
+                var hashedPass = HashingHelper.HashValueWith384(input.Password);
+
+                if (user.Password != hashedPass)
+                {
+                    if (_userConfiguration.BlockedFeatures)
                     {
-                        NeedOTP = true,
-                        Token = null
+                        user.NumberOfTry++;
+                        if (user.NumberOfTry == 3)
+                        {
+                            user.IsBlocked = true;
+                        }
+                        await EmailHelper.SendEmail(user.Email ?? user.Email, user.OTPCode, "Sign In OTP", "Complete Sign In Operation", _userConfiguration.EmailConfig);
+                        _context.Update(user);
+                        await _context.SaveChangesAsync();
+                    }
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "Password is Wrong." });
+                }
+
+                if (user?.LastLoggedInDeviceAddress != _baseDTO.MacAddress && user.UserType == UserType.Client)
+                {
+                    await SendOTP(user.Email);
+                    return new AppResponse<LoginResponseDTO>
+                    {
+                        Data = new LoginResponseDTO
+                        {
+                            NeedOTP = true,
+                            Token = null
+                        }
                     };
                 }
                 if (user == null)
                 {
-                    throw new Exception("User Not Found");
+                    return AppResponse<LoginResponseDTO>.Error(new Error { Message = "User Not Found." });
                 }
                 else
                 {
-                    await SendOTP(input.Email);
                     user.IsLoggedIn = true;
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
-                    await EmailHelper.SendEmail(user.Email ?? originalUserName, user.OTPCode, "Sign In OTP", "Complete Sign In Operation");
+                    await EmailHelper.SendEmail(user.Email ?? user.Email, user.OTPCode, "Sign In OTP", "Complete Sign In Operation", _userConfiguration.EmailConfig);
                 }
-                var role = user.IsAdmin ? "Admin" : "Client";
-                var token = TokenHelper.GenerateJWTToken(user,role); 
+                var token = _tokenService.GenerateAccessToken(GetClaims(user, hasPhoneNumber));
 
 
-                return new LoginResponseDTO
+                return new AppResponse<LoginResponseDTO>
                 {
-                    Token = token,  
-                    NeedOTP = false 
+                    Data = new LoginResponseDTO
+                    {
+                        NeedOTP = false,
+                        Token = token
+                    }
                 };
-                
-
-
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return AppResponse<LoginResponseDTO>.Error(new Error { Message = ErrorKeys.ErrorInSignIn, Category = "Auth" });
             }
-            
+
         }
-
-
-
-
-        public async Task<bool> ResetPassword(ResetPasswordInputDTO input)
+        public async Task<AppResponse<bool>> ResetPassword(ResetPasswordInputDTO input)
         {
             try
             {
-                
-                if (string.IsNullOrEmpty(input.PhoneNumber) && string.IsNullOrEmpty(input.Email))
-                    throw new Exception("Email or Phone Number must be provided."); 
+                var hashedPassword = HashingHelper.HashValueWith384(input.Password);
 
+                if (string.IsNullOrEmpty(input.PhoneNumber) && string.IsNullOrEmpty(input.Email))
+                    return AppResponse<bool>.Error(new Error { Message = "Email or Phone Number must be provided." });
                 string originalUserName = input.PhoneNumber ?? input.Email;
 
-                var hashedEmail = HashingHelper.HashValueWith384(input.Email);
+                //var hashedEmail = HashingHelper.HashValueWith384(input.Email);
                 //var hashedPhone = HashingHelper.HashValueWith384(input.PhoneNumber);
 
-                var user = _context.Users.Where(u => (u.Email == hashedEmail || u.PhoneNumber == input.PhoneNumber)).SingleOrDefault();
+                var user = _context.Users.Where(u => (u.Email == input.Email || u.PhoneNumber == input.PhoneNumber)).SingleOrDefault();
                 var otp = SendOTP(input.Email);
-                await EmailHelper.SendEmail(input.Email, otp.ToString(), "Reset Password", "Reset Password Done Successfully");
+                await EmailHelper.SendEmail(input.Email, otp.ToString(), "Reset Password", "Reset Password Done Successfully", _userConfiguration.EmailConfig);
 
                 if (user == null)
                 {
-                    return false;
+                    return AppResponse<bool>.Error(new Error { Message = "false" });
                 }
                 if (input.Password != input.ConfirmPassword)
                 {
-                    return false;
+                    return AppResponse<bool>.Error(new Error { Message = "false" });
                 }
-                user.Password = input.ConfirmPassword;
+
+                user.Password = HashingHelper.HashValueWith384(input.ConfirmPassword);
                 user.OTPCode = null;
                 user.OTPExpiry = null;
+                var oldPassword = _context.Users.Where(x => x.Password == hashedPassword).FirstOrDefault();
+                if (oldPassword.Password == input.Password)
+                {
+                    return AppResponse<bool>.Error(new Error { Message = "false" });
+                }
 
                 _context.Update(user);
                 await _context.SaveChangesAsync();
 
-                return true;
+                return AppResponse<bool>.Error(new Error { Message = "true" }); 
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                return AppResponse<bool>.Error(new Error { Message = ErrorKeys.ErrorInResetPassword, Category = "Auth" });
+
             }
         }
-
-        
-
-        
-
-        public async Task<bool> SendOTP(string email)
+        public async Task<AppResponse<bool>> SendOTP(string email)
         {
-            var hashedEmail = HashingHelper.HashValueWith384(email);
-            var user = _context.Users.Where(u => u.Email == hashedEmail).SingleOrDefault();
+
+            var user = _context.Users.Where(u => (u.Email == email)).SingleOrDefault();
             if (user == null)
             {
-                return false;
+                return AppResponse<bool>.Error(new Error { Message = "false" });
             }
             Random otp = new Random();
-            user.OTPCode =HashingHelper.HashValueWith384(otp.Next(11111, 99999).ToString());
+            user.OTPCode = otp.Next(11111, 99999).ToString();
             user.OTPExpiry = DateTime.Now.AddMinutes(5);
-             
+
             //Send via email
-            EmailHelper.SendEmail(email, user.OTPCode, "Sending OTP", "OTP was Sent to your email");
+            await EmailHelper.SendEmail(email, user.OTPCode, "Sending OTP", "OTP was Sent to your email", _userConfiguration.EmailConfig);
 
             _context.Update(user);
             _context.SaveChanges();
 
-            return true;
+            return AppResponse<bool>.Error(new Error { Message = "true" });
         }
-
-        public async Task<bool> SignOut(int userId)
+        public async Task<AppResponse<bool>> SignOut(int userId)
         {
             var user = _context.Users.Where(u => u.Id == userId && u.IsLoggedIn == true).SingleOrDefault();
             if (user == null)
             {
-                return false;
+                return AppResponse<bool>.Error(new Error { Message = "false" });
             }
 
             user.LastLoginTime = DateTime.Now;
@@ -207,41 +311,86 @@ namespace Picktime.Services
             _context.Update(user);
             _context.SaveChanges();
 
-            return true;
+            return AppResponse<bool>.Error(new Error { Message = "true" });
         }
-
         public async Task<string> Verification(VerificationInputDTO input)
         {
-            var hashedOTP = HashingHelper.HashValueWith384(input.OTPCode);
-            var hashedEmail = HashingHelper.HashValueWith384(input.Email);
-            var user = _context.Users.Where(u => (u.Email == hashedEmail) && u.OTPCode == hashedOTP
-            && u.IsLoggedIn == false && u.OTPExpiry > DateTime.Now).SingleOrDefault();
+            var user = _context.Users.Where(u => u.Email == input.Email && u.OTPCode == input.OTPCode
+            && u.OTPExpiry > DateTime.Now).SingleOrDefault();
             if (user == null)
             {
-                return "User not found";
+                return "User Not Found." ;
             }
 
-            if (input.IsSignup)
+            if (_userConfiguration.BlockedFeatures)
             {
-                user.IsVerfied = true;
+
+                if (user.IsBlocked)
+                {
+                    user.NumberOfTry = 0;
+                    user.IsBlocked = false;
+                }
+
+                _context.Update(user);
+                await _context.SaveChangesAsync();
             }
-            else
-            {
-                user.LastLoginTime = DateTime.Now;
-                user.IsLoggedIn = true;
-            }
+
+            user.LastLoginTime = DateTime.Now;
+            user.IsLoggedIn = true;
 
             user.OTPExpiry = null;
             user.OTPCode = null;
-
+            user.LastLoggedInDeviceAddress = _baseDTO.MacAddress;
             _context.Update(user);
             _context.SaveChanges();
-            EmailHelper.SendEmail(input.Email, user.OTPCode, "Verifying OTP", "OTP Verified Successfully");
-            var role = user.IsAdmin ? "Admin" : "Client";
+            await EmailHelper.SendEmail(input.Email, user.OTPCode, "Verifying OTP", "OTP Verified Successfully", _userConfiguration.EmailConfig);
             //for client false , to be an admin must be true argument 
-            var response = TokenHelper.GenerateJWTToken(user, role);
+            var response = _tokenService.GenerateAccessToken(GetClaims(user, false));
             return response;
         }
+        public async Task<bool> ToggleUserBlockStatus(int userId)
+        {
+            var user = await _context.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
+            user.IsBlocked = !user.IsBlocked;
 
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return user.IsBlocked;
+        }
+        private IEnumerable<Claim> GetClaims(User user, bool LoggedByPhoneNumber)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            LoggedInUser loggedInUser = new LoggedInUser
+            {
+                Email = user.Email,
+                FullName = user.FirstName + " " + user.LastName,
+                Id = user.Id,
+                MobileNumber = user.PhoneNumber,
+                IpAddress = _baseDTO.MacAddress,
+                UserType = user.UserType,
+                SelectedLanguage = user.SelectedLanguage,
+                LoggedByPhoneNumber = LoggedByPhoneNumber,
+                LoggedByEmail = !LoggedByPhoneNumber,
+                CategoryId = user.CategoryId.HasValue ? user.CategoryId.Value : null,
+                CategoryName = user.Category != null ? user.Category.CategoryName : null,
+                ProviderId = user.ProviderId.HasValue ? user.ProviderId.Value : null,
+                ProviderName = user.Provider != null ? user.Provider.Name : null,
+            };
+
+            var loggedInUserjson = JsonConvert.SerializeObject(loggedInUser, settings);
+            var claims = new List<Claim>
+            {
+               new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+               new Claim(UserSettingsClaimTypes.LoggedInUser,loggedInUserjson),
+
+            };
+            return claims;
+        }
     }
 }
