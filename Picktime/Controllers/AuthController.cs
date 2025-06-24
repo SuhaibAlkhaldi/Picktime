@@ -14,7 +14,7 @@ namespace Picktime.Controllers
     {
         private IAuth _IAuth;
 
-        public  AuthController(IAuth IUserAuth)
+        public AuthController(IAuth IUserAuth)
         {
             _IAuth = IUserAuth;
         }
@@ -95,7 +95,7 @@ namespace Picktime.Controllers
             }
         }
         [HttpPost("[action]")]
-        public async Task<IActionResult>  SignOut(int userId)
+        public async Task<IActionResult> SignOut(int userId)
         {
             try
             {

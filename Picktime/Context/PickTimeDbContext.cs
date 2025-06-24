@@ -13,7 +13,12 @@ namespace Picktime.Context
         public DbSet<Provider> Providers { get; set; }
         public DbSet<UserReview> UserReviewServices { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Category> categories { get; set; }
+        public DbSet<UserRedeemedCoupon> UserRedeemedCoupons { get; set; }
+
         public PickTimeDbContext(DbContextOptions options) : base(options)
         {
         }
@@ -22,6 +27,7 @@ namespace Picktime.Context
         {
             base.OnModelCreating(modelBuilder);
             SeedData(modelBuilder);
+            ConfigureBookingEntity(modelBuilder);
         }
 
         private void SeedData(ModelBuilder modelBuilder)
@@ -62,6 +68,15 @@ namespace Picktime.Context
             //    new UserReviewService {  CreatedBy = "Seed", CreationDate = DateTime.UtcNow, IsActive = true, Id = 1, Comment = "From Seed",ProviderServiceId=1,Rate=2,UserId=1 });
 
 
+        }
+
+        private void ConfigureBookingEntity(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.Property(b => b.Status)
+                      .HasConversion<int>(); // Store enum (status) as int
+            });
         }
     }
 }
