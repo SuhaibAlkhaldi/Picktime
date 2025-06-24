@@ -1,4 +1,4 @@
-﻿namespace Picktime.DTOs
+﻿namespace Picktime.DTOs.Errors
 {
     public class Error
     {

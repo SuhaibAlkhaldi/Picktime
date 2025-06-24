@@ -1,4 +1,4 @@
-﻿using Picktime.DTOs;
+﻿using Picktime.DTOs.Errors;
 using Picktime.DTOs.Provider;
 
 namespace Picktime.Interfaces

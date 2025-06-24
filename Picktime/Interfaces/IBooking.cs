@@ -1,13 +1,14 @@
-﻿using Picktime.DTOs;
+﻿using Picktime.DTOs.Booking;
+using Picktime.DTOs.Errors;
 using Picktime.Entities;
 
 namespace Picktime.Interfaces
 {
     public interface IBooking
     {
-        Task<string> Create(CreateBookingDTO input);
+        Task<AppResponse> Create(CreateBookingDTO input);
         Task<int> GenerateTicket();
-        Task<bool> Complete(int bookingId);
-        public Task<List<BookingDTO>> GetUserHistory(int userId);
+        Task<AppResponse<bool>> Complete(int bookingId);
+        Task<AppResponse<List<BookingDTO>>> GetUserHistory(int userId);
     }
 }

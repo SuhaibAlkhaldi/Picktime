@@ -2,7 +2,7 @@
 
 namespace Picktime.Entities
 {
-    public class UserRedeemedCoupon:SharedClass
+    public class UserRedeemedCoupon:BaseEntity
     {
         [ForeignKey("UserId")]
         public int UserId { get; set; }

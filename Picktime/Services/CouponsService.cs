@@ -1,52 +1,87 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
-using Picktime.DTOs;
+using Picktime.DTOs.Category;
 using Picktime.DTOs.Coupon;
-using Picktime.DTOs.Provider;
+using Picktime.DTOs.Errors;
 using Picktime.Entities;
-using Picktime.Heplers;
+using Picktime.Heplers.Error;
 using Picktime.Interfaces;
 
 namespace Picktime.Services
 {
-    public class LockUpItemService : ILockUpItem
+    public class CouponsService : ICoupon
     {
         private readonly PickTimeDbContext _context;
-
-        public LockUpItemService(PickTimeDbContext context)
+ 
+        public CouponsService(PickTimeDbContext context)
         {
             _context = context;
+           
         }
+        public async Task<AppResponse<PointsSummaryDTO>> GetAllPoints(int userId)
+        {
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+                if (user == null)
+                    throw new Exception("User not found");
+
+                // Calculate used points from redeemed coupons
+                var usedPoints = await _context.UserRedeemedCoupons
+                    .Where(rc => rc.UserId == userId)
+                    .Include(rc => rc.LockUpItem)
+                    .SumAsync(rc => (int?)rc.LockUpItem.Points) ?? 0;
+
+
+                return new AppResponse<PointsSummaryDTO>
+                {
+                    Data = new PointsSummaryDTO
+                    {
+                        AvailablePoints = user.Points,
+                        UsedPoints = usedPoints
+                    }
+                    
+                };
+            }
+            catch (Exception ex)
+            {
+                return AppResponse<PointsSummaryDTO>.Error(new Error { Message = ErrorKeys.ErrorInGetAllPoints, Category = "Coupon" });
+
+            }
+
+
+        }
+
 
         public async Task<AppResponse<CouponDTO>> AddCoupon(AddCouponInputDTO input)
         {
             try
             {
-                var lockUpType =  _context.LockUpType.FirstOrDefault(t => t.Name == input.CouponName);
+                var lockUpType = _context.LockUpType.FirstOrDefault(t => t.Name == input.CouponName);
 
                 if (lockUpType == null)
                 {
-                    
+
                     lockUpType = new LockUpType
                     {
                         Name = input.CouponName
                     };
                     _context.LockUpType.Add(lockUpType);
                 }
-                
 
-                
+
+
                 var lockUpItem = new LockUpItems
                 {
                     Points = input.Points,
                     Discount = input.Discount,
-                    LockUpType = lockUpType  
+                    LockUpType = lockUpType
                 };
 
                 _context.LockUpItems.Add(lockUpItem);
                 await _context.SaveChangesAsync();
 
-                
+
                 return new AppResponse<CouponDTO>
                 {
                     Data = new CouponDTO
@@ -57,7 +92,7 @@ namespace Picktime.Services
                         Discount = lockUpItem.Discount,
                         LockUpTypeId = lockUpType.Id
                     }
-                    
+
                 };
             }
 
@@ -79,7 +114,7 @@ namespace Picktime.Services
                 if (lockUpItem == null)
                     return AppResponse<CouponDTO>.Error(new Error { Message = "Coupon Not Found" });
 
-                
+
 
                 LockUpType lockUpType = null;
 
@@ -127,7 +162,7 @@ namespace Picktime.Services
                         Discount = lockUpItem.Discount,
                         LockUpTypeId = lockUpType?.Id ?? lockUpItem.LockUpTypeId
                     }
-                    
+
                 };
             }
             catch (Exception ex)
@@ -146,7 +181,7 @@ namespace Picktime.Services
                 if (couponId <= 0 || couponId == null)
                     return AppResponse<CouponDTO>.Error(new Error { Message = "Invalid Coupon ID." });
 
-                var coupon =  _context.LockUpItems.Find(couponId);
+                var coupon = _context.LockUpItems.Find(couponId);
                 if (coupon == null)
                     return AppResponse<CouponDTO>.Error(new Error { Message = "Coupon not found" });
 
@@ -161,5 +196,6 @@ namespace Picktime.Services
 
             }
         }
+
     }
 }

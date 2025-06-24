@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Picktime.DTOs.JWT;
-using Picktime.DTOs;
+using Picktime.DTOs.Auth;
 
 namespace Picktime.Middleware
 {

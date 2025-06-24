@@ -1,14 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
-using Picktime.DTOs;
 using Picktime.DTOs.Category;
+using Picktime.DTOs.Errors;
 using Picktime.DTOs.ProviderService;
 using Picktime.Entities;
-using Picktime.Heplers;
+using Picktime.Heplers.Error;
+using Picktime.Heplers.Image;
 using Picktime.Interfaces;
 using SendGrid.Helpers.Mail;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-using Error = Picktime.DTOs.Error;
+using Error = Picktime.DTOs.Errors.Error;
 
 namespace Picktime.Services
 {
@@ -85,10 +86,16 @@ namespace Picktime.Services
                 {
                     return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "Category Already Exist" });
                 }
+                string? imagePath = null;
+
+                if (request.Icon != null)
+                {
+                    imagePath = await ImageHelper.SaveImageAsync(request.Icon);
+                }
                 var addCategory = new Category
                 {
                     CategoryName = request.CategoryName,
-                    Icon = request.Icon
+                    Icon = imagePath
                 };
                 await _context.Categories.AddAsync(addCategory);
                 await _context.SaveChangesAsync();
@@ -98,7 +105,7 @@ namespace Picktime.Services
                     {
                         Id = addCategory.Id,
                         CategoryName = request.CategoryName,
-                        Icon = request.Icon
+                        Icon = imagePath
                     }
                 };
             }

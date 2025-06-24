@@ -1,4 +1,4 @@
-﻿namespace Picktime.DTOs
+﻿namespace Picktime.DTOs.Booking
 {
     public class CreateBookingDTO
     {

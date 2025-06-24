@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Picktime.DTOs.Coupon;
 using Picktime.Interfaces;
-using Picktime.Services;
 
 namespace Picktime.Controllers
 {
@@ -9,11 +9,11 @@ namespace Picktime.Controllers
     [ApiController]
     public class CouponController : ControllerBase
     {
-        private readonly ICopouns _copouns;
+        private readonly ICoupon _coupons;
 
-        public CouponController(ICopouns copouns)
+        public CouponController(ICoupon coupons)
         {
-            _copouns = copouns;
+            _coupons = coupons;
         }
 
         [HttpGet("[action]")]
@@ -21,7 +21,53 @@ namespace Picktime.Controllers
         {
             try
             {
-                var result = await _copouns.GetAllPoints(userId);
+                var result = await _coupons.GetAllPoints(userId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> AddCoupon(AddCouponInputDTO input)
+        {
+            try
+            {
+                var result = await _coupons.AddCoupon(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("[action]")]
+        public async Task<IActionResult> UpdateCoupon(UpdateCouponInputDTO input)
+        {
+            try
+            {
+                var result = await _coupons.UpdateCoupon(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteCoupon(int couponId)
+        {
+            try
+            {
+                var result = await _coupons.DeleteCoupon(couponId);
                 return Ok(result);
             }
             catch (Exception ex)

@@ -3,6 +3,6 @@
     public class AddCategoryInputDTO
     {
         public string CategoryName { get; set; }
-        public string Icon { get; set; }
+        public IFormFile Icon { get; set; }
     }
 }

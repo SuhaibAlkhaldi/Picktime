@@ -1,6 +1,6 @@
 ﻿using Picktime.Heplers.Enums;
 
-namespace Picktime.DTOs
+namespace Picktime.DTOs.Auth
 {
     public class SessionProvider
     {

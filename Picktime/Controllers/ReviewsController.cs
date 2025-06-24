@@ -11,11 +11,11 @@ namespace Picktime.Controllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        private readonly IReview _IReview;
+        private readonly IReview _review;
 
         public ReviewsController(IReview review)
         {
-            _IReview = review;
+            _review = review;
         }
 
         [HttpGet("[action]")]
@@ -23,7 +23,7 @@ namespace Picktime.Controllers
         {
             try
             {
-                var result = await _IReview.CalculateTimeOfService(ServiceId);
+                var result = await _review.CalculateTimeOfService(ServiceId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -37,7 +37,7 @@ namespace Picktime.Controllers
         {
             try
             {
-                var result = await _IReview.GetAllReviwes(ServiceId);
+                var result = await _review.GetAllReviwes(ServiceId);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -50,7 +50,23 @@ namespace Picktime.Controllers
         {
             try
             {
-                var result = await _IReview.CreateReview(input);
+                var result = await _review.CreateReview(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
+        [HttpDelete("[action]")]
+        public async Task<IActionResult> DeleteReview(int reviewId)
+        {
+            try
+            {
+                var result = await _review.DeleteReview(reviewId);
                 return Ok(result);
             }
             catch (Exception ex)

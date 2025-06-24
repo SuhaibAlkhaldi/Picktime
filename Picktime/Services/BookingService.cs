@@ -1,8 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
-using Picktime.DTOs;
+using Picktime.DTOs.Booking;
+using Picktime.DTOs.Category;
+using Picktime.DTOs.Errors;
 using Picktime.Entities;
 using Picktime.Heplers.Enums;
+using Picktime.Heplers.Error;
 using Picktime.Interfaces;
 
 namespace Picktime.Services
@@ -22,18 +25,27 @@ namespace Picktime.Services
 
 
         // make the service complete 
-        public async Task<bool> Complete(int bookingId)
+        public async Task<AppResponse<bool>> Complete(int bookingId)
         {
-            var booking = await _context.Bookings.FindAsync(bookingId);
-            if (booking == null) return false;
+            try
+            {
+                var booking = await _context.Bookings.FindAsync(bookingId);
+                if (booking == null)
+                    return AppResponse<bool>.Error(new Error { Message = "false" });
 
-            booking.Status = EServicesActions.Completed;
-            await _context.SaveChangesAsync();
+                booking.Status = EServicesActions.Completed;
+                await _context.SaveChangesAsync();
 
-            return true;
+                return AppResponse<bool>.Error(new Error { Message = "true" });
+            }
+            catch (Exception ex)
+            {
+                return AppResponse<bool>.Error(new Error { Message = ErrorKeys.ErrorInBookingComplete, Category = "Booking" });
+            }
+            
         }
 
-        public async Task<string> Create(CreateBookingDTO input)
+        public async Task<AppResponse> Create(CreateBookingDTO input)
         {
             try
             {
@@ -41,7 +53,7 @@ namespace Picktime.Services
 
                 if (userIdClaim == null)
                 {
-                    return "User is not authenticated. Please sign in.";
+                    return AppResponse.Error(new Error { Message = "User is not authenticated. Please sign in." });
                 }
 
                 int userId = int.Parse(userIdClaim.Value);
@@ -49,7 +61,7 @@ namespace Picktime.Services
 
                 if (user == null || !user.IsLoggedIn)
                 {
-                    return "User is not signed in.";
+                    return AppResponse.Error(new Error { Message = "User is not signed in." });
                 }
 
                 var ticketNumber = await GenerateTicket();
@@ -67,11 +79,12 @@ namespace Picktime.Services
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
-                return $"Booking created successfully. Your ticket number is {ticketNumber}";
+                return AppResponse.Success();
             }
             catch (Exception ex)
             {
-                return $"ERROR: {ex.Message} \n\n INNER: {ex.InnerException?.Message}";
+                return AppResponse<bool>.Error(new Error { Message = ErrorKeys.ErrorInCreatingBooking, Category = "Booking" });
+
             }
         }
 
@@ -110,9 +123,11 @@ namespace Picktime.Services
         }
 
         //get the history of all services for specific user
-        public async Task<List<BookingDTO>> GetUserHistory(int userId)
+        public async Task<AppResponse<List<BookingDTO>>> GetUserHistory(int userId)
         {
-            var bookingHistory = await _context.Bookings
+            try
+            {
+                var bookingHistory = await _context.Bookings
                 .Where(b => b.UserId == userId)
                 .Include(b => b.ProviderService)
                 .Select(b => new BookingDTO
@@ -124,7 +139,17 @@ namespace Picktime.Services
                 })
                 .ToListAsync();
 
-            return bookingHistory;
+                return new AppResponse<List<BookingDTO>>
+                {
+                    Data = bookingHistory
+                };
+            }
+            catch (Exception ex)
+            {
+                return AppResponse<List<BookingDTO>>.Error(new Error { Message = ErrorKeys.ErrorInGetUserHistory, Category = "Booking" });
+
+            }
+            
         }
 
     }
