@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Picktime.Migrations
 {
     /// <inheritdoc />
-    public partial class initDb : Migration
+    public partial class New : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,14 +61,14 @@ namespace Picktime.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Age = table.Column<float>(type: "real", nullable: false),
+                    Birthdate = table.Column<DateOnly>(type: "date", nullable: true),
                     Points = table.Column<int>(type: "int", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SelectedLanguage = table.Column<int>(type: "int", nullable: false),
                     IsLoggedIn = table.Column<bool>(type: "bit", nullable: false),
-                    LastLoggedInDeviceAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsVerfied = table.Column<bool>(type: "bit", nullable: false),
-                    LastLoginTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastLoggedInDeviceAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsVerfied = table.Column<bool>(type: "bit", nullable: true),
+                    LastLoginTime = table.Column<DateTime>(type: "datetime2", nullable: true),
                     OTPCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OTPExpiry = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsAdmin = table.Column<bool>(type: "bit", nullable: false),
@@ -137,42 +137,7 @@ namespace Picktime.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reviews",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Rate = table.Column<float>(type: "real", nullable: false),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false),
-                    ServiceProviderId = table.Column<int>(type: "int", nullable: false),
-                    ServiceProvidersId = table.Column<int>(type: "int", nullable: false),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reviews", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Providers_ServiceProvidersId",
-                        column: x => x.ServiceProvidersId,
-                        principalTable: "Providers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Reviews_Users_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ServicesEntities",
+                name: "ProviderServices",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -181,8 +146,8 @@ namespace Picktime.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ExpectedEstimatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
                     ActualEstimatedTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    ProviderId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    ProviderId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -191,9 +156,9 @@ namespace Picktime.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServicesEntities", x => x.Id);
+                    table.PrimaryKey("PK_ProviderServices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServicesEntities_Providers_ProviderId",
+                        name: "FK_ProviderServices_Providers_ProviderId",
                         column: x => x.ProviderId,
                         principalTable: "Providers",
                         principalColumn: "Id",
@@ -207,13 +172,11 @@ namespace Picktime.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ExpectedArrivalTime = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    ExpectedArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TicketNumber = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
-                    ServicesEntityId = table.Column<int>(type: "int", nullable: false),
+                    ProviderServiceId = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -224,14 +187,53 @@ namespace Picktime.Migrations
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_ServicesEntities_ServicesEntityId",
-                        column: x => x.ServicesEntityId,
-                        principalTable: "ServicesEntities",
+                        name: "FK_Bookings_ProviderServices_ProviderServiceId",
+                        column: x => x.ProviderServiceId,
+                        principalTable: "ProviderServices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Bookings_Users_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserReviewServices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rate = table.Column<float>(type: "real", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    ProviderServiceId = table.Column<int>(type: "int", nullable: false),
+                    ProviderId = table.Column<int>(type: "int", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserReviewServices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserReviewServices_ProviderServices_ProviderServiceId",
+                        column: x => x.ProviderServiceId,
+                        principalTable: "ProviderServices",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserReviewServices_Providers_ProviderId",
+                        column: x => x.ProviderId,
+                        principalTable: "Providers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_UserReviewServices_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -240,52 +242,52 @@ namespace Picktime.Migrations
             migrationBuilder.InsertData(
                 table: "LockUpType",
                 columns: new[] { "Id", "CreatedBy", "CreationDate", "IsActive", "Name", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, "System", new DateTime(2025, 6, 18, 21, 21, 2, 807, DateTimeKind.Local).AddTicks(2633), true, "Coupon", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "System", new DateTime(2025, 6, 20, 19, 37, 10, 377, DateTimeKind.Local).AddTicks(1402), true, "Coupon", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "categories",
                 columns: new[] { "Id", "CategoryName", "CreatedBy", "CreationDate", "Icon", "IsActive", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, "Bank", "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2773), "fa-solid fa-building-columns", true, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Bank", "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1638), "fa-solid fa-building-columns", true, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "LockUpItems",
                 columns: new[] { "Id", "CreatedBy", "CreationDate", "Discount", "IsActive", "LockUpTypeId", "Points", "UpdatedBy", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "System", new DateTime(2025, 6, 18, 21, 21, 2, 807, DateTimeKind.Local).AddTicks(2751), 0.1f, true, 1, 100, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "System", new DateTime(2025, 6, 18, 21, 21, 2, 807, DateTimeKind.Local).AddTicks(2754), 0.2f, true, 1, 200, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, "System", new DateTime(2025, 6, 18, 21, 21, 2, 807, DateTimeKind.Local).AddTicks(2755), 0.3f, true, 1, 300, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, "System", new DateTime(2025, 6, 20, 19, 37, 10, 377, DateTimeKind.Local).AddTicks(1597), 0.1f, true, 1, 100, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "System", new DateTime(2025, 6, 20, 19, 37, 10, 377, DateTimeKind.Local).AddTicks(1601), 0.2f, true, 1, 200, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "System", new DateTime(2025, 6, 20, 19, 37, 10, 377, DateTimeKind.Local).AddTicks(1602), 0.3f, true, 1, 300, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Providers",
                 columns: new[] { "Id", "CategoryId", "CreatedBy", "CreationDate", "Description", "IsActive", "Logo", "Name", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, 1, "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2789), "Arab Bank", true, "fa-solid fa-kaaba", "Arab Bank", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, 1, "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1670), "Arab Bank", true, "fa-solid fa-kaaba", "Arab Bank", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
-                table: "ServicesEntities",
+                table: "ProviderServices",
                 columns: new[] { "Id", "ActualEstimatedTime", "CreatedBy", "CreationDate", "Description", "ExpectedEstimatedTime", "IsActive", "Name", "ProviderId", "Status", "UpdatedBy", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2805), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1M Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new TimeOnly(0, 2, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2811), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2813), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2815), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2817), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2819), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 7, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2821), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 8, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 18, 18, 21, 2, 807, DateTimeKind.Utc).AddTicks(2823), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1698), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1M Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new TimeOnly(0, 2, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1706), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1710), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1713), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1716), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1720), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1723), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 20, 16, 37, 10, 377, DateTimeKind.Utc).AddTicks(1726), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_ServicesEntityId",
+                name: "IX_Bookings_ProviderServiceId",
                 table: "Bookings",
-                column: "ServicesEntityId");
+                column: "ProviderServiceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_UsersId",
+                name: "IX_Bookings_UserId",
                 table: "Bookings",
-                column: "UsersId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LockUpItems_LockUpTypeId",
@@ -298,19 +300,24 @@ namespace Picktime.Migrations
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reviews_ServiceProvidersId",
-                table: "Reviews",
-                column: "ServiceProvidersId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Reviews_UsersId",
-                table: "Reviews",
-                column: "UsersId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ServicesEntities_ProviderId",
-                table: "ServicesEntities",
+                name: "IX_ProviderServices_ProviderId",
+                table: "ProviderServices",
                 column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReviewServices_ProviderId",
+                table: "UserReviewServices",
+                column: "ProviderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReviewServices_ProviderServiceId",
+                table: "UserReviewServices",
+                column: "ProviderServiceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserReviewServices_UserId",
+                table: "UserReviewServices",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -323,13 +330,13 @@ namespace Picktime.Migrations
                 name: "LockUpItems");
 
             migrationBuilder.DropTable(
-                name: "Reviews");
-
-            migrationBuilder.DropTable(
-                name: "ServicesEntities");
+                name: "UserReviewServices");
 
             migrationBuilder.DropTable(
                 name: "LockUpType");
+
+            migrationBuilder.DropTable(
+                name: "ProviderServices");
 
             migrationBuilder.DropTable(
                 name: "Users");
