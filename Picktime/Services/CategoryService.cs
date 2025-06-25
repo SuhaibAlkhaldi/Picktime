@@ -1,12 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Picktime.Context;
+using Picktime.DTOs.Auth;
 using Picktime.DTOs.Category;
 using Picktime.DTOs.Errors;
 using Picktime.DTOs.ProviderService;
 using Picktime.Entities;
-using Picktime.Heplers.Error;
-using Picktime.Heplers.Image;
+using Picktime.Helpers.Enums;
+using Picktime.Helpers.Error;
+using Picktime.Helpers.Image;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 using SendGrid.Helpers.Mail;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Error = Picktime.DTOs.Errors.Error;
@@ -16,10 +19,12 @@ namespace Picktime.Services
     public class CategoryService : ICategory
     {
         private readonly PickTimeDbContext _context;
+        private readonly SessionProvider _sessionProvider;
 
-        public CategoryService(PickTimeDbContext context)
+        public CategoryService(PickTimeDbContext context, SessionProvider sessionProvider)
         {
             _context = context;
+            _sessionProvider = sessionProvider;
         }
 
 
@@ -77,37 +82,44 @@ namespace Picktime.Services
         {
             try
             {
-                if (string.IsNullOrEmpty(request.CategoryName))
+                if(_sessionProvider.CurrentUser.UserType  == UserType.CategoryCreator || _sessionProvider.CurrentUser.UserType ==UserType.SystemAdmin)
                 {
-                    return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "Please Enter Category Name" });
-                }
-                bool exist = _context.Categories.Any(x => x.CategoryName == request.CategoryName);
-                if (exist)
-                {
-                    return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "Category Already Exist" });
-                }
-                string? imagePath = null;
-
-                if (request.Icon != null)
-                {
-                    imagePath = await ImageHelper.SaveImageAsync(request.Icon);
-                }
-                var addCategory = new Category
-                {
-                    CategoryName = request.CategoryName,
-                    Icon = imagePath
-                };
-                await _context.Categories.AddAsync(addCategory);
-                await _context.SaveChangesAsync();
-                return new AppResponse<CategoryOutputDTO>
-                {
-                    Data = new CategoryOutputDTO
+                    if (string.IsNullOrEmpty(request.CategoryName))
                     {
-                        Id = addCategory.Id,
+                        return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "Please Enter Category Name" });
+                    }
+                    bool exist = _context.Categories.Any(x => x.CategoryName == request.CategoryName);
+                    if (exist)
+                    {
+                        return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "Category Already Exist" });
+                    }
+                    string? imagePath = null;
+
+                    if (request.Icon != null)
+                    {
+                        imagePath = await ImageHelper.SaveImageAsync(request.Icon);
+                    }
+                    var addCategory = new Category
+                    {
                         CategoryName = request.CategoryName,
                         Icon = imagePath
-                    }
-                };
+                    };
+                    await _context.Categories.AddAsync(addCategory);
+                    await _context.SaveChangesAsync();
+                    return new AppResponse<CategoryOutputDTO>
+                    {
+                        Data = new CategoryOutputDTO
+                        {
+                            Id = addCategory.Id,
+                            CategoryName = request.CategoryName,
+                            Icon = imagePath
+                        }
+                    };
+                }
+                else
+                {
+                    return AppResponse<CategoryOutputDTO>.Error(new Error { Message = "UnAuthorized" });
+                }
             }
             catch (Exception ex)
             {

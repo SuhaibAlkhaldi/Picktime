@@ -1,4 +1,4 @@
-﻿namespace Picktime.Heplers.Enums
+﻿namespace Picktime.Helpers.Enums
 {
     public enum EServicesActions
     {

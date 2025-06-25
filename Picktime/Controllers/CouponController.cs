@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Coupon;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 
 namespace Picktime.Controllers
 {
@@ -15,7 +17,7 @@ namespace Picktime.Controllers
         {
             _coupons = coupons;
         }
-
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetAllPoints(int userId)
         {
@@ -31,8 +33,7 @@ namespace Picktime.Controllers
         }
 
 
-
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddCoupon(AddCouponInputDTO input)
         {
@@ -47,7 +48,7 @@ namespace Picktime.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.ProviderCreator)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateCoupon(UpdateCouponInputDTO input)
         {
@@ -61,7 +62,11 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-        [Authorize(Roles = "Admin")]
+
+
+
+
+        [AuthorizeUserType(UserType.CategoryCreator)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteCoupon(int couponId)
         {

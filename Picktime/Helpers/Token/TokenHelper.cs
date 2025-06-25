@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Picktime.Heplers.Token
+namespace Picktime.Helpers.Token
 {
     public class TokenHelper
     {

@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Picktime.DTOs.JWT;
 using System.Text;
 
-namespace Picktime.Heplers.JWT
+namespace Picktime.Helpers.JWT
 {
     public static class JwtStartup
     {

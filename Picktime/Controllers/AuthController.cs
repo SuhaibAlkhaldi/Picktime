@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Auth;
 using Picktime.Entities;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 
 namespace Picktime.Controllers
 {
@@ -37,8 +39,8 @@ namespace Picktime.Controllers
             }
         }
 
+        [AuthorizeUserType(UserType.SystemAdmin , UserType.CategoryCreator)]
         [HttpPost("[action]")]
-        [Authorize]
         public async Task<IActionResult> SignUpCreators(SignUpCreatorDTO input)
         {
             try
@@ -67,19 +69,7 @@ namespace Picktime.Controllers
             }
         }
 
-        [HttpPut("[action]")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordInputDTO input)
-        {
-            try
-            {
-                var result = await _IAuth.ResetPassword(input);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
-        }
+        
 
         [HttpPost("[action]")]
         public async Task<IActionResult> SendOTP(string email)
@@ -121,6 +111,24 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        [HttpPut("[action]")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordInputDTO input)
+        {
+            try
+            {
+                var result = await _IAuth.ResetPassword(input);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+        [Authorize(nameof(UserType.SystemAdmin))]
         [HttpPatch("[action]")]
         public async Task<IActionResult> ToggleUserBlockStatus(int userId)
         {

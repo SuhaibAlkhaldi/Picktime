@@ -1,4 +1,4 @@
-﻿using Picktime.Heplers.Enums;
+﻿using Picktime.Helpers.Enums;
 
 namespace Picktime.DTOs.Provider
 {

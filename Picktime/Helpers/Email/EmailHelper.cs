@@ -3,7 +3,7 @@ using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Net.Mail;
 
-namespace Picktime.Heplers.Email
+namespace Picktime.Helpers.Email
 {
     public static class EmailHelper
     {

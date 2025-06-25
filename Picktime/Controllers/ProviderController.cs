@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Provider;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 using System.Management;
 
 namespace Picktime.Controllers
@@ -88,8 +90,7 @@ namespace Picktime.Controllers
         }
 
 
-
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.ProviderCreator)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddProvider(AddProviderInputDTO input)
         {
@@ -106,7 +107,7 @@ namespace Picktime.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.ProviderCreator)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateProvider(UpdateProviderInputDTO input)
         {
@@ -125,7 +126,7 @@ namespace Picktime.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.ProviderCreator)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> RemoveProvider(int providerId)
         {
