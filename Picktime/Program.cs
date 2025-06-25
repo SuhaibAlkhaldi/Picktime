@@ -8,12 +8,14 @@ using Microsoft.OpenApi.Models;
 using Picktime.Context;
 using Picktime.DTOs.Auth;
 using Picktime.DTOs.JWT;
-using Picktime.Heplers.Swagger;
+using Picktime.Helpers.Enums;
+using Picktime.Helpers.Swagger;
 using Picktime.Interfaces;
 using Picktime.Middleware;
 using Picktime.Services;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
@@ -23,8 +25,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-V1IJ63L\\SQLEXPRESS;Initial Catalog=PickTimeDB;Integrated Security=True;TrustServerCertificate=True"));
-builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-NBIV360;Initial Catalog=PickTimeDB;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"));
+builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-V1IJ63L\\SQLEXPRESS;Initial Catalog=PickTimeDB;Integrated Security=True;TrustServerCertificate=True"));
+//builder.Services.AddDbContext<PickTimeDbContext>(options => options.UseSqlServer("Data Source=DESKTOP-NBIV360;Initial Catalog=PickTimeDB;Integrated Security=True;Encrypt=True;Trust Server Certificate=True"));
 builder.Services.AddScoped<IAuth, AuthService>(); //configure for my service 
 builder.Services.AddScoped<ICategory, CategoryService>();
 builder.Services.AddScoped<IBooking, BookingService>();
@@ -35,7 +37,20 @@ builder.Services.AddScoped<ICoupon, CouponsService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddScoped<BaseDTO>();
 builder.Services.AddScoped<SessionProvider>();
+builder.Services.AddAuthorization(options =>
+{
+  options.AddPolicy("SystemAdminOrCategoryCreator", policy =>
+  policy.RequireAssertion(context =>
+  {
+      var loggedInUser = context.User.FindFirst("loggedInUser")?.Value;
+      if (loggedInUser == null) return false;
 
+      // Parse the JSON to extract UserType
+      var userObj = JsonSerializer.Deserialize<LoggedInUser>(loggedInUser);
+      return userObj?.UserType == UserType.SystemAdmin ||
+             userObj?.UserType == UserType.CategoryCreator;
+  }));
+});
 JwtSettings jwtSettings = new();
 configuration.Bind(nameof(jwtSettings), jwtSettings);
 builder.Services.AddSingleton(jwtSettings);
@@ -76,10 +91,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)) // should match the one used to sign the token
         };
     });
+builder.Services.AddAuthorization(options =>
+{
+    // Dynamic policy registration for all UserTypes
+    foreach (var userType in Enum.GetNames(typeof(UserType)))
+    {
+        options.AddPolicy(userType, policy =>
+            policy.RequireClaim("UserType", userType));
+    }
 
+    // Optional: Add composite policies
+    options.AddPolicy("SystemAdminOrCategoryCreator", policy =>
+        policy.RequireClaim("UserType",
+            UserType.SystemAdmin.GetDescription(),
+            UserType.CategoryCreator.GetDescription(),
+            UserType.Client.GetDescription(),
+            UserType.ProviderCreator.GetDescription()));
+});
 builder.Services.AddAuthorization();
-
-
 
 
 
@@ -98,12 +127,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-app.UseMiddleware<MacAddressMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<SessionMiddleware>();
+app.UseMiddleware<MacAddressMiddleware>();
+app.UseMiddleware<UserTypeMiddleware>();
 app.MapControllers();
 
 app.Run();

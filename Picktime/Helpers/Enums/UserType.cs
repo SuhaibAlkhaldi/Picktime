@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel;
 
-namespace Picktime.Heplers.Enums
+namespace Picktime.Helpers.Enums
 {
     public enum UserType
     {
-        [Description("System Admin")]
+        [Description("SystemAdmin")]
         SystemAdmin = 0,
-        [Description("Category Creator")]
+        [Description("CategoryCreator")]
         CategoryCreator = 1,
-        [Description("Provider Creator")]
+        [Description("ProviderCreator")]
         ProviderCreator = 2,
         [Description("Client")]
         Client = 3,

@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Picktime.Heplers.Swagger
+namespace Picktime.Helpers.Swagger
 {
     public static class SwaggerStartup
     {

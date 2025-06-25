@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Category;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 
 namespace Picktime.Controllers
 {
@@ -50,7 +52,7 @@ namespace Picktime.Controllers
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddCategory(AddCategoryInputDTO input)
         {
@@ -67,7 +69,7 @@ namespace Picktime.Controllers
 
 
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryInputDTO input)
         {
@@ -83,7 +85,7 @@ namespace Picktime.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {

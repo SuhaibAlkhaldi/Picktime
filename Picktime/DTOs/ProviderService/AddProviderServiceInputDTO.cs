@@ -1,4 +1,4 @@
-﻿using Picktime.Heplers.Enums;
+﻿using Picktime.Helpers.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Picktime.DTOs.ProviderService

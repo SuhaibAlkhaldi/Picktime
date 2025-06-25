@@ -1,6 +1,6 @@
 ﻿using Picktime.Entities;
 
-namespace Picktime.Heplers.Error
+namespace Picktime.Helpers.Error
 {
     public static class ErrorKeys
     {

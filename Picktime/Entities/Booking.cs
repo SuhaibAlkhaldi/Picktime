@@ -1,4 +1,4 @@
-﻿using Picktime.Heplers.Enums;
+﻿using Picktime.Helpers.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Picktime.Entities
@@ -14,10 +14,11 @@ namespace Picktime.Entities
         public int UserId { get; set; }
         public User Users { get; set; }
 
+        
         public int ProviderServiceId { get; set; }
 
         [ForeignKey("ProviderServiceId")]
-        public ProviderServices ProviderService { get; set; }
+        public ProviderServices ProviderServices { get; set; }
 
     }
 }

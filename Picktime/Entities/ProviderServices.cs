@@ -1,6 +1,6 @@
 ﻿using Picktime.DTOs.Provider;
 using Picktime.DTOs.ProviderService;
-using Picktime.Heplers.Enums;
+using Picktime.Helpers.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Picktime.Entities

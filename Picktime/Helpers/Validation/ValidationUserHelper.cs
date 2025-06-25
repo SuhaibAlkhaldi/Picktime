@@ -1,7 +1,7 @@
 ﻿using Picktime.DTOs.Validation;
 using System.Text.RegularExpressions;
 
-namespace Picktime.Heplers.Validation
+namespace Picktime.Helpers.Validation
 {
     public static class ValidationUserHelper
     {
@@ -57,7 +57,7 @@ namespace Picktime.Heplers.Validation
         public static bool IsValidEmail(string email)
         {
             string pattern = @"^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|outlook\.com|zoho\.com)$";
-            return Regex.IsMatch(email, pattern);
+            return Regex.IsMatch(email.ToLower(), pattern);
         }
         public static bool IsPasswordValid(string password)
         {

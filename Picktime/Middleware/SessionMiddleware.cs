@@ -28,6 +28,7 @@ namespace Picktime.Middleware
                     if (user != null)
                     {
                         sessionProvider.InitialiseCurrentUser(user);
+
                     }
                 }
             }

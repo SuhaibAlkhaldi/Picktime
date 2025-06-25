@@ -1,5 +1,5 @@
 ﻿using Picktime.Entities;
-using Picktime.Heplers.Enums;
+using Picktime.Helpers.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace Picktime.DTOs.Auth

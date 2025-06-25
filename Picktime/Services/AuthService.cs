@@ -5,18 +5,18 @@ using Newtonsoft.Json;
 using Picktime.Context;
 using Picktime.DTOs.Auth;
 using Picktime.Entities;
-using Picktime.Heplers.Email;
-using Picktime.Heplers.Enums;
-using Picktime.Heplers.Hashing;
-using Picktime.Heplers.Token;
-using Picktime.Heplers.Validation;
+using Picktime.Helpers.Email;
+using Picktime.Helpers.Enums;
+using Picktime.Helpers.Hashing;
+using Picktime.Helpers.Token;
+using Picktime.Helpers.Validation;
 using Picktime.Interfaces;
 using SendGrid.Helpers.Mail;
 using System.Security.Claims;
 using Picktime.DTOs.JWT;
 using Picktime.DTOs.Category;
 using Picktime.DTOs.Errors;
-using Picktime.Heplers.Error;
+using Picktime.Helpers.Error;
 
 namespace Picktime.Services
 {
@@ -47,7 +47,7 @@ namespace Picktime.Services
 
                     user.FirstName = input.FirstName;
                     user.LastName = input.LastName;
-                    user.Email = input.Email;
+                    user.Email = input.Email.ToLower();
                     user.Password = HashingHelper.HashValueWith384(input.Password);
                     user.PhoneNumber = input.PhoneNumber;
                     user.Birthdate = input.Birthdate;
@@ -85,7 +85,7 @@ namespace Picktime.Services
 
                     if (input.CategoryId.HasValue)
                     {
-                        selectedCategory = _context.Categories.Where(x => x.Id == input.CategoryId).FirstOrDefault();
+                        selectedCategory = await _context.Categories.Where(x => x.Id == input.CategoryId).FirstOrDefaultAsync();
                         if (selectedCategory is null)
                         {
                             return AppResponse.Error(new Error { Message = "Category Not Found." });
@@ -388,8 +388,15 @@ namespace Picktime.Services
             {
                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                new Claim(UserSettingsClaimTypes.LoggedInUser,loggedInUserjson),
+               new Claim("UserType", ((UserType)user.UserType).GetDescription())
 
             };
+            if (Enum.IsDefined(typeof(UserType), user.UserType))
+            {
+                var roleName = ((UserType)user.UserType).ToString();
+                claims.Add(new Claim(ClaimTypes.Role, roleName));
+            }
+
             return claims;
         }
     }

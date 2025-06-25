@@ -1,4 +1,4 @@
-﻿namespace Picktime.Heplers.Image
+﻿namespace Picktime.Helpers.Image
 {
     public class ImageHelper
     {

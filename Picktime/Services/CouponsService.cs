@@ -4,7 +4,7 @@ using Picktime.DTOs.Category;
 using Picktime.DTOs.Coupon;
 using Picktime.DTOs.Errors;
 using Picktime.Entities;
-using Picktime.Heplers.Error;
+using Picktime.Helpers.Error;
 using Picktime.Interfaces;
 
 namespace Picktime.Services

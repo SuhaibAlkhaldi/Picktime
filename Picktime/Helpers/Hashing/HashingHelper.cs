@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Picktime.Heplers.Hashing
+namespace Picktime.Helpers.Hashing
 {
     public static class HashingHelper
     {

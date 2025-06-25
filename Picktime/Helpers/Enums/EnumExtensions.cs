@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
 
-namespace Picktime.Heplers.Enums
+namespace Picktime.Helpers.Enums
 {
     public static class EnumExtensions
     {

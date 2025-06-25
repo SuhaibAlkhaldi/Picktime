@@ -4,8 +4,8 @@ using Picktime.DTOs.Booking;
 using Picktime.DTOs.Category;
 using Picktime.DTOs.Errors;
 using Picktime.Entities;
-using Picktime.Heplers.Enums;
-using Picktime.Heplers.Error;
+using Picktime.Helpers.Enums;
+using Picktime.Helpers.Error;
 using Picktime.Interfaces;
 
 namespace Picktime.Services
@@ -129,13 +129,13 @@ namespace Picktime.Services
             {
                 var bookingHistory = await _context.Bookings
                 .Where(b => b.UserId == userId)
-                .Include(b => b.ProviderService)
+                .Include(b => b.ProviderServices)
                 .Select(b => new BookingDTO
                 {
                     Id = b.Id,
                     Description = b.Description,
                     ExpectedArrivalTime = b.ExpectedArrivalTime,
-                    ProviderServiceName = b.ProviderService.Name
+                    ProviderServiceName = b.ProviderServices.Name
                 })
                 .ToListAsync();
 

@@ -7,8 +7,8 @@ using Picktime.DTOs.Category;
 using Picktime.DTOs.Errors;
 using Picktime.DTOs.Provider;
 using Picktime.Entities;
-using Picktime.Heplers.Error;
-using Picktime.Heplers.Image;
+using Picktime.Helpers.Error;
+using Picktime.Helpers.Image;
 using Picktime.Interfaces;
 
 namespace Picktime.Services

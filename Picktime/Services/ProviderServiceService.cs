@@ -7,7 +7,7 @@ using Picktime.DTOs.Errors;
 using Picktime.DTOs.Provider;
 using Picktime.DTOs.ProviderService;
 using Picktime.Entities;
-using Picktime.Heplers.Error;
+using Picktime.Helpers.Error;
 using Picktime.Interfaces;
 using System.Runtime.CompilerServices;
 

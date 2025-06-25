@@ -5,8 +5,8 @@ using Picktime.DTOs.Category;
 using Picktime.DTOs.Errors;
 using Picktime.DTOs.Review;
 using Picktime.Entities;
-using Picktime.Heplers.Enums;
-using Picktime.Heplers.Error;
+using Picktime.Helpers.Enums;
+using Picktime.Helpers.Error;
 using Picktime.Interfaces;
 
 namespace Picktime.Services
