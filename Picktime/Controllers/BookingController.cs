@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Booking;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 
 namespace Picktime.Controllers
 {
@@ -16,7 +18,7 @@ namespace Picktime.Controllers
             _bookingService = bookingService;
         }
 
-
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> Complete(int bookingId)
         {
@@ -31,6 +33,7 @@ namespace Picktime.Controllers
             }
         }
 
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetUserHistory(int userId)
         {
@@ -45,7 +48,7 @@ namespace Picktime.Controllers
             }
         }
 
-
+        [AuthorizeUserType(UserType.Client)]
         [HttpPost("[action]")]
         public async Task<IActionResult> Create(CreateBookingDTO input)
         {

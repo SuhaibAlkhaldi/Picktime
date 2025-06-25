@@ -20,7 +20,7 @@ namespace Picktime.Controllers
         }
 
 
-        [AllowAnonymous]
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetProviderDetails(int id)
         {
@@ -37,7 +37,7 @@ namespace Picktime.Controllers
 
 
 
-        [AllowAnonymous]
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetAllProvider()
         {
@@ -56,7 +56,7 @@ namespace Picktime.Controllers
 
 
 
-        [AllowAnonymous]
+        [AuthorizeUserType(UserType.Client)]
         [HttpPost("[action]")]
         public async Task<IActionResult> GetCalculatedAverageServiceTime(RequestCalculateAverageServiceTimeDTO requestDTO)
         {
@@ -74,7 +74,7 @@ namespace Picktime.Controllers
 
 
 
-        [AllowAnonymous]
+        [AuthorizeUserType(UserType.Client)]
         [HttpPost("[action]")]
         public async Task<IActionResult> CalculateRatingByServiceProvider(RequestCalculateRatingByServiceProviderDTO requestDTO)
         {

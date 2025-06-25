@@ -48,7 +48,7 @@ namespace Picktime.Controllers
             }
         }
 
-        [AuthorizeUserType(UserType.ProviderCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateCoupon(UpdateCouponInputDTO input)
         {
@@ -66,7 +66,7 @@ namespace Picktime.Controllers
 
 
 
-        [AuthorizeUserType(UserType.CategoryCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteCoupon(int couponId)
         {
