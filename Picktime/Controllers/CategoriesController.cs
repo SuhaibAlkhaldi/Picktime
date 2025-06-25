@@ -21,7 +21,7 @@ namespace Picktime.Controllers
 
 
 
-
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetOneCategory(int categoryId)
         {
@@ -37,7 +37,7 @@ namespace Picktime.Controllers
         }
 
 
-
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetAllCategories()
         {

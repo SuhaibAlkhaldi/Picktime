@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Picktime.DTOs.Review;
 using Picktime.Entities;
+using Picktime.Helpers.Enums;
 using Picktime.Interfaces;
+using Picktime.Middleware;
 using Picktime.Services;
 
 namespace Picktime.Controllers
@@ -18,6 +21,7 @@ namespace Picktime.Controllers
             _review = review;
         }
 
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> CalculateTimeOfService(int ServiceId)
         {
@@ -32,6 +36,7 @@ namespace Picktime.Controllers
             }
         }
 
+        [AuthorizeUserType(UserType.Client)]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetAllReviwes(int ServiceId)
         {
@@ -45,6 +50,8 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [AuthorizeUserType(UserType.Client)]
         [HttpPost("[action]")]
         public async Task<IActionResult> CreateReview(CreateReviewDTO input)
         {
@@ -60,7 +67,7 @@ namespace Picktime.Controllers
         }
 
 
-
+        [AllowAnonymous]
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteReview(int reviewId)
         {
