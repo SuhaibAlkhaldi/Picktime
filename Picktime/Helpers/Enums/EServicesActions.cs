@@ -5,5 +5,6 @@
         InProgress = 0,
         Completed = 1,
         UnCompleted = 2,
+        Active =3
     }
 }

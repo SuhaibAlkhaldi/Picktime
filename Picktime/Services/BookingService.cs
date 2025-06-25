@@ -151,6 +151,23 @@ namespace Picktime.Services
             }
             
         }
+        public async Task<string> ActivateBooking(int bookingId)
+        {
+            var booking = await _context.Bookings.FindAsync(bookingId);
+
+            if (booking == null)
+                return "Booking not found.";
+
+            if (booking.Status != EServicesActions.InProgress)
+                return $"Cannot activate booking. Current status: {booking.Status}";
+
+            booking.Status = EServicesActions.Active;
+            booking.UpdatedDate = DateTime.UtcNow;
+
+            await _context.SaveChangesAsync();
+
+            return "Booking activated successfully.";
+        }
 
     }
 }
