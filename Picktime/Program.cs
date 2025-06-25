@@ -37,6 +37,16 @@ builder.Services.AddScoped<ICoupon, CouponsService>();
 builder.Services.AddTransient<ITokenService, TokenService>();
 builder.Services.AddScoped<BaseDTO>();
 builder.Services.AddScoped<SessionProvider>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 builder.Services.AddAuthorization(options =>
 {
   options.AddPolicy("SystemAdminOrCategoryCreator", policy =>
