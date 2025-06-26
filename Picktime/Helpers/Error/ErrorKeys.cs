@@ -36,5 +36,7 @@ namespace Picktime.Helpers.Error
         public const string ErrorInGetAllPoints = "ERROR_IN_GET_ALL_POINTS";
         public const string ErrorInGetReviews = "ERROR_IN_GET_REVIEWS";
         public const string ErrorInCreateReviews = "ERROR_IN_ CREATE_REVIEWS";
+        public const string ErrorInReplacePointsToCoupon = "ERROR_IN_ REPLACE_POINTS_TO_COUPON";
+        public const string ErrorInGetCoupon = "ERROR_IN_GET_COUPON";
     }
 }

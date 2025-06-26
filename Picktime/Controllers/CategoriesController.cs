@@ -52,7 +52,8 @@ namespace Picktime.Controllers
             }
         }
 
-        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
+        [AuthorizeUserType(UserType.CategoryCreator)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddCategory(AddCategoryInputDTO input)
         {
@@ -69,7 +70,8 @@ namespace Picktime.Controllers
 
 
 
-        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
+        [AuthorizeUserType(UserType.CategoryCreator)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateCategory(UpdateCategoryInputDTO input)
         {
@@ -85,7 +87,8 @@ namespace Picktime.Controllers
         }
 
 
-        [AuthorizeUserType(UserType.SystemAdmin, UserType.CategoryCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
+        [AuthorizeUserType(UserType.CategoryCreator)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {

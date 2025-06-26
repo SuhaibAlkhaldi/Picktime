@@ -6,17 +6,18 @@ using Picktime.DTOs.Errors;
 using Picktime.Entities;
 using Picktime.Helpers.Error;
 using Picktime.Interfaces;
+using System.Security.Claims;
 
 namespace Picktime.Services
 {
     public class CouponsService : ICoupon
     {
         private readonly PickTimeDbContext _context;
- 
-        public CouponsService(PickTimeDbContext context)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CouponsService(PickTimeDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
-           
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<AppResponse<PointsSummaryDTO>> GetAllPoints(int userId)
         {
@@ -197,5 +198,92 @@ namespace Picktime.Services
             }
         }
 
+        public async Task<AppResponse<List<CouponDTO>>> GetAllCoupons()
+        {
+            try
+            {
+                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null)
+                {
+                    return AppResponse<List<CouponDTO>>.Error(new Error { Message = "User is not authenticated. Please sign in." });
+                }
+
+                int userId = int.Parse(userIdClaim.Value);
+                var user = await _context.Users.FindAsync(userId);
+
+                if (user == null || !user.IsLoggedIn)
+                {
+                    return AppResponse<List<CouponDTO>>.Error(new Error { Message = "User is not signed in." });
+                }
+
+                var coupons = await(from i in _context.LockUpItems
+                                    join t in _context.LockUpType on i.LockUpTypeId equals t.Id
+                                    where i.IsActive == true && i.Points <= user.Points
+                                    select new CouponDTO
+                                    {
+                                        LockUpItemId = i.Id,
+                                        CouponName = t.Name,
+                                        Discount = i.Discount,
+                                        Points = i.Points,
+                                        LockUpTypeId = i.LockUpTypeId
+                                    }).ToListAsync();
+
+                return AppResponse<List<CouponDTO>>.Success(coupons);
+            }
+            catch (Exception ex)
+            {
+                return AppResponse<List<CouponDTO>>.Error(new Error { Message = ErrorKeys.ErrorInGetCoupon, Category = "LockUpItem" });
+            }
+        }
+
+        public async Task<AppResponse> RedeemCoupon(int lockUpItemId)
+        {
+            try
+            {
+
+                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+
+                if (userIdClaim == null)
+                {
+                    return AppResponse.Error(new Error { Message = "User is not authenticated. Please sign in." });
+                }
+
+                int userId = int.Parse(userIdClaim.Value);
+                var user = await _context.Users.FindAsync(userId);
+
+                if (user == null || !user.IsLoggedIn)
+                {
+                    return AppResponse.Error(new Error { Message = "User is not signed in." });
+                }
+
+                var coupon = await _context.LockUpItems.FirstOrDefaultAsync(c => c.Id == lockUpItemId && c.IsActive);
+                if (coupon == null)
+                    return AppResponse.Error(new Error { Message = "Coupon not found or inactive." });
+
+                if (user.Points < coupon.Points)
+                    return AppResponse.Error(new Error { Message = "Not enough points to redeem this coupon." });
+
+                // Deduct points
+                user.Points -= coupon.Points;
+                _context.Users.Update(user);
+
+                // Store selection (assuming you have a UserCoupons table)
+                var userCoupon = new UserRedeemedCoupon
+                {
+                    UserId = userId,
+                    LockUpItemId = lockUpItemId
+                };
+                await _context.UserRedeemedCoupons.AddAsync(userCoupon);
+
+                await _context.SaveChangesAsync();
+
+                return AppResponse.Success("Coupon redeemed successfully.");
+            }
+            catch (Exception ex)
+            {
+                return AppResponse.Error(new Error { Message = ErrorKeys.ErrorInDeleteCoupon, Category = "LockUpItem" });
+            }
+        }
     }
 }

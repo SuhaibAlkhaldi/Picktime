@@ -190,18 +190,18 @@ namespace Picktime.Services
                     return AppResponse<LoginResponseDTO>.Error(new Error { Message = "Password is Wrong." });
                 }
 
-                if (user?.LastLoggedInDeviceAddress != _baseDTO.MacAddress && user.UserType == UserType.Client)
-                {
-                    await SendOTP(user.Email);
-                    return new AppResponse<LoginResponseDTO>
-                    {
-                        Data = new LoginResponseDTO
-                        {
-                            NeedOTP = true,
-                            Token = null
-                        }
-                    };
-                }
+                //if (user?.LastLoggedInDeviceAddress != _baseDTO.MacAddress && user.UserType == UserType.Client)
+                //{
+                //    await SendOTP(user.Email);
+                //    return new AppResponse<LoginResponseDTO>
+                //    {
+                //        Data = new LoginResponseDTO
+                //        {
+                //            NeedOTP = true,
+                //            Token = null
+                //        }
+                //    };
+                //}
                 if (user == null)
                 {
                     return AppResponse<LoginResponseDTO>.Error(new Error { Message = "User Not Found." });
@@ -269,7 +269,7 @@ namespace Picktime.Services
                 _context.Update(user);
                 await _context.SaveChangesAsync();
 
-                return AppResponse<bool>.Error(new Error { Message = "true" }); 
+                return AppResponse<bool>.Success(true);
             }
             catch (Exception ex)
             {
@@ -293,9 +293,9 @@ namespace Picktime.Services
             await EmailHelper.SendEmail(email, user.OTPCode, "Sending OTP", "OTP was Sent to your email", _userConfiguration.EmailConfig);
 
             _context.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return AppResponse<bool>.Error(new Error { Message = "true" });
+            return AppResponse<bool>.Success(true);
         }
         public async Task<AppResponse<bool>> SignOut(int userId)
         {
@@ -309,9 +309,9 @@ namespace Picktime.Services
             user.IsLoggedIn = false;
 
             _context.Update(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
-            return AppResponse<bool>.Error(new Error { Message = "true" });
+            return AppResponse<bool>.Success(true);
         }
         public async Task<string> Verification(VerificationInputDTO input)
         {

@@ -11,8 +11,9 @@ namespace Picktime.Entities
         public int UserId { get; set; }
         public User Users { get; set; }
 
-        [ForeignKey("ProviderServiceId")]
+        
         public int ProviderServiceId { get; set; }
+        [ForeignKey("ProviderServiceId")]
         public ProviderServices ProviderServices { get; set; }
 
     }

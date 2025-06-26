@@ -8,6 +8,7 @@ using Picktime.Entities;
 using Picktime.Helpers.Enums;
 using Picktime.Helpers.Error;
 using Picktime.Interfaces;
+using System.Security.Claims;
 
 namespace Picktime.Services
 {
@@ -52,7 +53,7 @@ namespace Picktime.Services
         {
             try
             {
-                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId");
+                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
 
                 if (userIdClaim == null)
                 {
@@ -91,7 +92,7 @@ namespace Picktime.Services
 
                 //Update booking 
                 booking.IsReviewed = true;
-
+                _context.Update(booking);
                 // Give reward points (assume 10)
                 var userPoint = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
                 if (userPoint == null)
@@ -99,6 +100,7 @@ namespace Picktime.Services
 
 
                 userPoint.Points += 10;
+                _context.Update(userPoint);
                 await _context.SaveChangesAsync();
 
                 return AppResponse.Success("Review submitted successfully.You earned 10 reward points.");
