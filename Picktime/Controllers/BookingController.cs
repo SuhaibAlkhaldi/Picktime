@@ -25,7 +25,7 @@ namespace Picktime.Controllers
             try
             {
                 var result = await _bookingService.Complete(bookingId);
-                return Ok(result);
+                return Ok(result); 
             }
             catch (Exception ex)
             {
