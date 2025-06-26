@@ -47,7 +47,20 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+        [AuthorizeUserType(UserType.Client)]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> ActivateBooking(int bookingId)
+        {
+            try
+            {
+                var result = await _bookingService.ActivateBooking(bookingId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
         [AuthorizeUserType(UserType.Client)]
         [HttpPost("[action]")]
         public async Task<IActionResult> Create(CreateBookingDTO input)

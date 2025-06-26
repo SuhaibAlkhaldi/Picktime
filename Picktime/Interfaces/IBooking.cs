@@ -10,5 +10,6 @@ namespace Picktime.Interfaces
         Task<int> GenerateTicket();
         Task<AppResponse<bool>> Complete(int bookingId);
         Task<AppResponse<List<BookingDTO>>> GetUserHistory(int userId);
+        Task<string> ActivateBooking(int bookingId);
     }
 }
