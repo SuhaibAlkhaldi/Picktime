@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Picktime.Migrations
 {
     /// <inheritdoc />
-    public partial class AddDB : Migration
+    public partial class FixDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -257,7 +257,6 @@ namespace Picktime.Migrations
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     ProviderServiceId = table.Column<int>(type: "int", nullable: false),
-                    ProviderServicesId = table.Column<int>(type: "int", nullable: false),
                     ProviderId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -269,8 +268,8 @@ namespace Picktime.Migrations
                 {
                     table.PrimaryKey("PK_UserReviewServices", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserReviewServices_ProviderServices_ProviderServicesId",
-                        column: x => x.ProviderServicesId,
+                        name: "FK_UserReviewServices_ProviderServices_ProviderServiceId",
+                        column: x => x.ProviderServiceId,
                         principalTable: "ProviderServices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -290,41 +289,41 @@ namespace Picktime.Migrations
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "CategoryName", "CreatedBy", "CreationDate", "Icon", "IsActive", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, "Bank", "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7445), "fa-solid fa-building-columns", true, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "Bank", "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6132), "fa-solid fa-building-columns", true, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "LockUpType",
                 columns: new[] { "Id", "CreatedBy", "CreationDate", "IsActive", "Name", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, "System", new DateTime(2025, 6, 25, 18, 9, 53, 453, DateTimeKind.Local).AddTicks(7303), true, "Coupon", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, "System", new DateTime(2025, 6, 26, 17, 0, 50, 708, DateTimeKind.Local).AddTicks(5951), true, "Coupon", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "LockUpItems",
                 columns: new[] { "Id", "CreatedBy", "CreationDate", "Discount", "IsActive", "LockUpTypeId", "Points", "UpdatedBy", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, "System", new DateTime(2025, 6, 25, 18, 9, 53, 453, DateTimeKind.Local).AddTicks(7421), 0.1f, true, 1, 100, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, "System", new DateTime(2025, 6, 25, 18, 9, 53, 453, DateTimeKind.Local).AddTicks(7423), 0.2f, true, 1, 200, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, "System", new DateTime(2025, 6, 25, 18, 9, 53, 453, DateTimeKind.Local).AddTicks(7424), 0.3f, true, 1, 300, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, "System", new DateTime(2025, 6, 26, 17, 0, 50, 708, DateTimeKind.Local).AddTicks(6106), 0.1f, true, 1, 100, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, "System", new DateTime(2025, 6, 26, 17, 0, 50, 708, DateTimeKind.Local).AddTicks(6109), 0.2f, true, 1, 200, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, "System", new DateTime(2025, 6, 26, 17, 0, 50, 708, DateTimeKind.Local).AddTicks(6110), 0.3f, true, 1, 300, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
                 table: "Providers",
                 columns: new[] { "Id", "CategoryId", "CreatedBy", "CreationDate", "Description", "IsActive", "Logo", "Name", "UpdatedBy", "UpdatedDate" },
-                values: new object[] { 1, 1, "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7462), "Arab Bank", true, "fa-solid fa-kaaba", "Arab Bank", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 1, 1, "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6150), "Arab Bank", true, "fa-solid fa-kaaba", "Arab Bank", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "ProviderServices",
                 columns: new[] { "Id", "ActualEstimatedTime", "CreatedBy", "CreationDate", "Description", "ExpectedEstimatedTime", "IsActive", "Name", "ProviderId", "Status", "UpdatedBy", "UpdatedDate" },
                 values: new object[,]
                 {
-                    { 1, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7480), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1M Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new TimeOnly(0, 2, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7517), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7520), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7522), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7524), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7525), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 7, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7527), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 8, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 25, 15, 9, 53, 453, DateTimeKind.Utc).AddTicks(7529), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 1, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6173), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1M Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2, new TimeOnly(0, 2, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6179), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6181), "Service Time 1m ", new TimeOnly(0, 1, 0), true, "1m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4, new TimeOnly(0, 1, 30), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6183), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6185), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6187), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 1, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6189), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8, new TimeOnly(0, 1, 0), "Seed", new DateTime(2025, 6, 26, 14, 0, 50, 708, DateTimeKind.Utc).AddTicks(6190), "Service Time 2m ", new TimeOnly(0, 2, 0), true, "2m Service", 1, 2, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -368,9 +367,9 @@ namespace Picktime.Migrations
                 column: "ProviderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserReviewServices_ProviderServicesId",
+                name: "IX_UserReviewServices_ProviderServiceId",
                 table: "UserReviewServices",
-                column: "ProviderServicesId");
+                column: "ProviderServiceId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserReviewServices_UserId",

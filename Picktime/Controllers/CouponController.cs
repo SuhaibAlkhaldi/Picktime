@@ -33,6 +33,24 @@ namespace Picktime.Controllers
         }
 
 
+
+
+        [AuthorizeUserType(UserType.Client)]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAllCoupons()
+        {
+            try
+            {
+                var result = await _coupons.GetAllCoupons();
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         [AuthorizeUserType(UserType.SystemAdmin)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddCoupon(AddCouponInputDTO input)
@@ -47,6 +65,26 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+
+        [AuthorizeUserType(UserType.Client)]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> RedeemCoupon(int lockUpItemId)
+        {
+            try
+            {
+                var result = await _coupons.RedeemCoupon(lockUpItemId);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
+
 
         [AuthorizeUserType(UserType.SystemAdmin)]
         [HttpPut("[action]")]
@@ -80,5 +118,12 @@ namespace Picktime.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+
+        
+
+
+
+        
     }
 }

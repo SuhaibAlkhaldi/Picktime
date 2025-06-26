@@ -39,7 +39,7 @@ namespace Picktime.Controllers
             }
         }
 
-        [AuthorizeUserType(UserType.SystemAdmin , UserType.CategoryCreator)]
+        //[AuthorizeUserType(UserType.SystemAdmin , UserType.CategoryCreator)]
         [HttpPost("[action]")]
         public async Task<IActionResult> SignUpCreators(SignUpCreatorDTO input)
         {

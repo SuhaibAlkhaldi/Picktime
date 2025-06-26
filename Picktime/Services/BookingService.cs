@@ -7,6 +7,7 @@ using Picktime.Entities;
 using Picktime.Helpers.Enums;
 using Picktime.Helpers.Error;
 using Picktime.Interfaces;
+using System.Security.Claims;
 
 namespace Picktime.Services
 {
@@ -34,9 +35,10 @@ namespace Picktime.Services
                     return AppResponse<bool>.Error(new Error { Message = "false" });
 
                 booking.Status = EServicesActions.Completed;
+                _context.Update(booking);
                 await _context.SaveChangesAsync();
 
-                return AppResponse<bool>.Error(new Error { Message = "true" });
+                return AppResponse<bool>.Success(true);
             }
             catch (Exception ex)
             {
@@ -49,7 +51,7 @@ namespace Picktime.Services
         {
             try
             {
-                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId");
+                var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
 
                 if (userIdClaim == null)
                 {
@@ -89,31 +91,7 @@ namespace Picktime.Services
         }
 
 
-        //public async Task<string> Create(CreateBookingDTO input)
-        //{
-
-        //    try
-        //    {
-        //        var ticketNumber = await GenerateTicket();
-        //        var booking = new Booking()
-        //        {
-        //            Description = input.Description,
-        //            UserId = input.UserId, // from token 
-        //            ProviderServiceId = input.ServiceId, // from the id of the srvice
-        //            TicketNumber = ticketNumber,
-        //            Status = EServicesActions.InProgress,
-        //            ExpectedArrivalTime = input.ExpectedArrivalTime,
-
-        //        };
-        //        _context.Bookings.Add(booking);
-        //        await _context.SaveChangesAsync();
-        //        return $"Booking created successfully. Your ticket number is {ticketNumber}";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return $"ERROR: {ex.Message} \n\n INNER: {ex.InnerException?.Message}";
-        //    }
-        //}
+        
 
         public async Task<int> GenerateTicket()
         {
