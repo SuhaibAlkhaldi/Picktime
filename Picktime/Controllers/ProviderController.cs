@@ -89,7 +89,7 @@ namespace Picktime.Controllers
             }
         }
 
-
+        [AuthorizeUserType(UserType.SystemAdmin)]
         [AuthorizeUserType( UserType.ProviderCreator)]
         [HttpPost("[action]")]
         public async Task<IActionResult> AddProvider(AddProviderInputDTO input)
@@ -107,6 +107,7 @@ namespace Picktime.Controllers
 
 
 
+        [AuthorizeUserType(UserType.SystemAdmin)]
         [AuthorizeUserType(UserType.ProviderCreator)]
         [HttpPut("[action]")]
         public async Task<IActionResult> UpdateProvider(UpdateProviderInputDTO input)
@@ -125,8 +126,8 @@ namespace Picktime.Controllers
 
 
 
-
-        [AuthorizeUserType( UserType.ProviderCreator)]
+        [AuthorizeUserType(UserType.SystemAdmin)]
+        [AuthorizeUserType(UserType.ProviderCreator)]
         [HttpDelete("[action]")]
         public async Task<IActionResult> RemoveProvider(int providerId)
         {
